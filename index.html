@@ -3,221 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Concurso Turbo IA - Preparação Inteligente para Concursos</title>
+    <title>EduSmart Pro - Sistema Completo de Estudos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .progress-bar { transition: width 0.5s ease; }
-        .pulse-animation { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .typing-animation::after {
-            content: '|';
-            animation: blink 1s infinite;
-        }
-        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .typing-animation { border-right: 2px solid #667eea; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 50% { border-color: transparent; } 51%, 100% { border-color: #667eea; } }
+        .progress-bar { transition: width 0.5s ease-in-out; }
+        .chat-message { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .question-card { transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .question-card.correct { border-left-color: #10b981; background-color: #f0fdf4; }
+        .question-card.incorrect { border-left-color: #ef4444; background-color: #fef2f2; }
+        .study-material { background: linear-gradient(145deg, #f8fafc, #e2e8f0); }
     </style>
 </head>
 <body class="bg-gray-50">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 gradient-bg flex items-center justify-center z-50">
+        <div class="text-center text-white">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+            <h2 class="text-2xl font-bold">EduSmart Pro</h2>
+            <p class="text-lg opacity-90">Carregando seu ambiente de estudos...</p>
+        </div>
+    </div>
+
     <!-- Login Screen -->
-    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center">
+    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4" style="display: none;">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-3xl">🎯</span>
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-graduation-cap text-white text-3xl"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-800">Concurso Turbo IA</h1>
-                <p class="text-gray-600">Faça login para continuar</p>
+                <h1 class="text-3xl font-bold text-gray-800">EduSmart Pro</h1>
+                <p class="text-gray-600 mt-2">Sistema Inteligente de Estudos</p>
             </div>
-
+            
             <form id="loginForm" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email ou Usuário</label>
-                    <input type="text" id="loginUser" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Digite seu email ou usuário">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="loginEmail" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                    <input type="password" id="loginPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Digite sua senha">
+                    <input type="password" id="loginPassword" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all font-semibold">
+                <button type="submit" 
+                        class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition duration-300">
                     Entrar
                 </button>
             </form>
-
-            <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600">Não tem uma conta? <button onclick="showAdminLogin()" class="text-purple-600 hover:text-purple-700 font-semibold">Área Administrativa</button></p>
-            </div>
-
-            <div class="mt-8 p-4 bg-blue-50 rounded-lg">
-                <h3 class="font-semibold text-blue-800 mb-2">🎉 Planos Disponíveis</h3>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Mensal:</span>
-                        <span class="font-semibold text-blue-800">R$ 30,00/mês</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Anual:</span>
-                        <span class="font-semibold text-blue-800">R$ 199,00/ano</span>
-                    </div>
-                </div>
-                <p class="text-xs text-blue-600 mt-2">Entre em contato para adquirir sua assinatura!</p>
-            </div>
+            
+            <div id="loginError" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden"></div>
         </div>
     </div>
 
-    <!-- Admin Login Screen -->
-    <div id="adminLoginScreen" class="min-h-screen gradient-bg flex items-center justify-center hidden">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-r from-red-600 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-3xl">⚙️</span>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-800">Painel Administrativo</h1>
-                <p class="text-gray-600">Acesso restrito</p>
-            </div>
-
-            <form id="adminLoginForm" class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuário Admin</label>
-                    <input type="text" id="adminUser" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="admin">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha Admin</label>
-                    <input type="password" id="adminPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="admin123">
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white py-3 rounded-lg hover:from-red-700 hover:to-orange-700 transition-all font-semibold">
-                    Entrar como Admin
-                </button>
-            </form>
-
-            <div class="mt-6 text-center">
-                <button onclick="showUserLogin()" class="text-purple-600 hover:text-purple-700 font-semibold text-sm">← Voltar ao Login</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Panel -->
-    <div id="adminPanel" class="min-h-screen bg-gray-100 hidden">
-        <header class="bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg">
-            <div class="container mx-auto px-6 py-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-2xl">⚙️</span>
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="min-h-screen bg-gray-50" style="display: none;">
+        <!-- Admin Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-user-shield text-2xl mr-3"></i>
                         <h1 class="text-2xl font-bold">Painel Administrativo</h1>
                     </div>
-                    <button onclick="logout()" class="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-lg transition-colors">
-                        Sair
-                    </button>
+                    <div class="flex items-center space-x-4">
+                        <span id="adminName" class="text-lg"></span>
+                        <button onclick="logout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <div class="container mx-auto px-6 py-8">
+        <!-- Admin Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Usuários Ativos</p>
-                            <p class="text-2xl font-bold text-blue-600" id="activeUsers">0</p>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                            <i class="fas fa-users text-xl"></i>
                         </div>
-                        <span class="text-3xl">👥</span>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Total de Usuários</p>
+                            <p id="totalUsers" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Receita Mensal</p>
-                            <p class="text-2xl font-bold text-green-600" id="monthlyRevenue">R$ 0</p>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-600">
+                            <i class="fas fa-user-check text-xl"></i>
                         </div>
-                        <span class="text-3xl">💰</span>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Usuários Ativos</p>
+                            <p id="activeUsers" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Assinaturas Anuais</p>
-                            <p class="text-2xl font-bold text-purple-600" id="annualSubs">0</p>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                            <i class="fas fa-book text-xl"></i>
                         </div>
-                        <span class="text-3xl">📅</span>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Simulados Realizados</p>
+                            <p id="totalSimulations" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Novos Hoje</p>
-                            <p class="text-2xl font-bold text-orange-600" id="newToday">0</p>
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-chart-line text-xl"></i>
                         </div>
-                        <span class="text-3xl">🆕</span>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Taxa de Aprovação</p>
+                            <p id="approvalRate" class="text-2xl font-bold text-gray-900">0%</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Create User Form -->
-            <div class="bg-white rounded-xl p-8 shadow-lg mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Criar Novo Usuário</h2>
-                <form id="createUserForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
-                        <input type="text" id="newUserName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="newUserEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Usuário</label>
-                        <input type="text" id="newUserUsername" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                        <input type="password" id="newUserPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Assinatura</label>
-                        <select id="newUserPlan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                            <option value="monthly">Mensal - R$ 30,00</option>
-                            <option value="annual">Anual - R$ 199,00</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Data de Vencimento</label>
-                        <input type="date" id="newUserExpiry" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div class="md:col-span-2">
-                        <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                            Criar Usuário
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Users List -->
-            <div class="bg-white rounded-xl p-8 shadow-lg">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Usuários Cadastrados</h2>
+            <!-- User Management -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Gerenciar Usuários</h2>
+                    <button onclick="showAddUserModal()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition duration-300">
+                        <i class="fas fa-plus mr-2"></i>Adicionar Usuário
+                    </button>
+                </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full table-auto">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nome</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Plano</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Vencimento</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ações</th>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plano</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="usersTableBody">
-                            <!-- Users will be inserted here -->
+                        <tbody id="usersTable" class="bg-white divide-y divide-gray-200">
                         </tbody>
                     </table>
                 </div>
@@ -225,570 +163,639 @@
         </div>
     </div>
 
-    <!-- Main App (existing content) -->
-    <div id="mainApp" class="hidden">
-        <!-- Header -->
+    <!-- Student Dashboard -->
+    <div id="studentDashboard" class="min-h-screen bg-gray-50" style="display: none;">
+        <!-- Student Header -->
         <header class="gradient-bg text-white shadow-lg">
-            <div class="container mx-auto px-6 py-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">🎯</span>
-                        </div>
-                        <h1 class="text-2xl font-bold">Concurso Turbo IA</h1>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-graduation-cap text-2xl mr-3"></i>
+                        <h1 class="text-2xl font-bold">EduSmart Pro</h1>
                     </div>
-                    <nav class="hidden md:flex space-x-6">
-                        <button onclick="showSection('dashboard')" class="hover:text-yellow-300 transition-colors">Dashboard</button>
-                        <button onclick="showSection('perfil-concurso')" class="hover:text-yellow-300 transition-colors">Perfil do Concurso</button>
-                        <button onclick="showSection('diagnostico')" class="hover:text-yellow-300 transition-colors">Diagnóstico</button>
-                        <button onclick="showSection('simulados')" class="hover:text-yellow-300 transition-colors">Simulados</button>
-                        <button onclick="showSection('redacao')" class="hover:text-yellow-300 transition-colors">Redação</button>
-                        <button onclick="showSection('chat')" class="hover:text-yellow-300 transition-colors">Chat IA</button>
-                    </nav>
-                    <div class="flex items-center space-x-3">
-                        <span class="text-sm">Olá, <span id="currentUserName" class="font-semibold">Usuário</span></span>
-                        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition-colors">
-                            Sair
+                    <div class="flex items-center space-x-4">
+                        <span id="studentName" class="text-lg"></span>
+                        <button onclick="logout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Sair
                         </button>
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Perfil do Concurso Section -->
-        <section id="perfil-concurso" class="section-content">
-            <div class="container mx-auto px-6 py-8">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Perfil do Concurso</h2>
-                    <p class="text-gray-600">Configure os dados do seu concurso para receber um plano de estudos personalizado</p>
+        <!-- Student Navigation -->
+        <nav class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-8">
+                    <button onclick="showStudentSection('dashboard')" class="student-nav-btn py-4 px-2 border-b-2 border-purple-500 text-purple-600 font-medium">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </button>
+                    <button onclick="showStudentSection('materials')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-book mr-2"></i>Materiais
+                    </button>
+                    <button onclick="showStudentSection('simulations')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-clipboard-list mr-2"></i>Simulados
+                    </button>
+                    <button onclick="showStudentSection('chat')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-robot mr-2"></i>Chat IA
+                    </button>
+                    <button onclick="showStudentSection('progress')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-chart-line mr-2"></i>Progresso
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Student Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Dashboard Section -->
+            <div id="studentDashboardSection" class="student-section">
+                <!-- AI Configuration -->
+                <div id="aiConfigSection" class="bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl shadow-lg p-6 mb-8 text-white">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-robot text-3xl mr-4"></i>
+                        <div>
+                            <h2 class="text-2xl font-bold">Configure sua IA Pessoal</h2>
+                            <p class="opacity-90">Conecte sua própria IA Gemini gratuita em 3 passos simples</p>
+                        </div>
+                    </div>
+                    
+                    <div id="aiSetupSteps" class="bg-white bg-opacity-10 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">📋 Passo a Passo - Super Fácil!</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4 mt-1">
+                                    <span class="font-bold">1</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Acesse o Google AI Studio</p>
+                                    <p class="text-sm opacity-90">Clique no link: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline hover:text-yellow-300">https://aistudio.google.com/app/apikey</a></p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4 mt-1">
+                                    <span class="font-bold">2</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Faça login com sua conta Google</p>
+                                    <p class="text-sm opacity-90">Use qualquer conta Google (Gmail). É 100% gratuito!</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4 mt-1">
+                                    <span class="font-bold">3</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Clique em "Create API Key"</p>
+                                    <p class="text-sm opacity-90">Copie a chave que aparece (começa com "AIza...")</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-yellow-400 bg-opacity-20 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-lightbulb text-yellow-300 mr-2"></i>
+                                <p class="text-sm"><strong>Dica:</strong> Sua chave é pessoal e segura. Ninguém mais terá acesso!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Cole sua chave da IA aqui:</label>
+                            <div class="flex">
+                                <input type="password" id="geminiApiKey" placeholder="AIza..." 
+                                       class="flex-1 px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-l-lg text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+                                <button onclick="toggleApiKeyVisibility()" class="px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 border-l-0 text-white hover:bg-opacity-30">
+                                    <i id="toggleIcon" class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="saveGeminiKey()" class="px-6 py-3 bg-white text-purple-600 font-semibold rounded-r-lg hover:bg-opacity-90 transition duration-300">
+                                    Salvar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="aiStatus" class="hidden">
+                            <div class="flex items-center p-3 bg-green-400 bg-opacity-20 rounded-lg">
+                                <i class="fas fa-check-circle text-green-300 mr-3"></i>
+                                <span class="text-sm">IA conectada com sucesso! Agora você pode usar o chat inteligente.</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-xl p-8 shadow-lg">
-                    <form id="concursoForm" class="space-y-8">
-                        <!-- Informações Básicas -->
+                <!-- Contest Configuration -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Configurar Concurso</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">📋 Informações Básicas</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Concurso *</label>
-                                    <input type="text" id="nomeConcurso" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ex: Prefeitura de São Paulo - Professor" required>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nível de Escolaridade *</label>
-                                    <select id="nivelEscolaridade" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                                        <option value="">Selecione o nível</option>
-                                        <option value="fundamental">Ensino Fundamental</option>
-                                        <option value="medio">Ensino Médio</option>
-                                        <option value="tecnico">Técnico</option>
-                                        <option value="superior">Ensino Superior</option>
-                                        <option value="pos-graduacao">Pós-graduação</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Área de Atuação *</label>
-                                    <select id="areaAtuacao" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                                        <option value="">Selecione a área</option>
-                                        <option value="educacao">Educação</option>
-                                        <option value="saude">Saúde</option>
-                                        <option value="seguranca">Segurança Pública</option>
-                                        <option value="administrativa">Administrativa</option>
-                                        <option value="juridica">Jurídica</option>
-                                        <option value="fiscal">Fiscal/Tributária</option>
-                                        <option value="tecnologia">Tecnologia</option>
-                                        <option value="engenharia">Engenharia</option>
-                                        <option value="outras">Outras</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Local do Concurso *</label>
-                                    <input type="text" id="localConcurso" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ex: São Paulo/SP" required>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Data da Prova *</label>
-                                    <input type="date" id="dataProva" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tempo Disponível por Dia *</label>
-                                    <select id="tempoDisponivel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                                        <option value="">Selecione o tempo</option>
-                                        <option value="1-2">1-2 horas por dia</option>
-                                        <option value="3-4">3-4 horas por dia</option>
-                                        <option value="5-6">5-6 horas por dia</option>
-                                        <option value="7-8">7-8 horas por dia</option>
-                                        <option value="8+">Mais de 8 horas por dia</option>
-                                    </select>
-                                </div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Concurso</label>
+                            <select id="contestSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <option value="">Selecione um concurso</option>
+                                <option value="enem">ENEM</option>
+                                <option value="vestibular">Vestibular</option>
+                                <option value="concurso-publico">Concurso Público</option>
+                                <option value="oab">OAB</option>
+                                <option value="medicina">Medicina</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Área de Interesse</label>
+                            <select id="areaSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <option value="">Selecione uma área</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="saveContestConfig()" class="mt-6 gradient-bg text-white px-6 py-3 rounded-lg hover:opacity-90 transition duration-300">
+                        <i class="fas fa-save mr-2"></i>Salvar Configuração
+                    </button>
+                </div>
+
+                <!-- Study Plan -->
+                <div id="studyPlanSection" class="bg-white rounded-xl shadow-lg p-6 mb-8" style="display: none;">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Seu Plano de Estudos</h2>
+                    <div id="studyPlanContent" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-clock text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Horas Estudadas</p>
+                                <p id="studyHours" class="text-2xl font-bold text-gray-900">0h</p>
                             </div>
                         </div>
-
-                        <!-- Conteúdo Programático -->
-                        <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">📚 Conteúdo Programático</h3>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Cole aqui o conteúdo programático do edital *</label>
-                                <textarea id="conteudoProgramatico" rows="10" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Cole aqui todo o conteúdo programático do edital do concurso..." required></textarea>
-                                <p class="text-sm text-gray-500 mt-2">💡 Dica: Cole o conteúdo completo do edital para uma análise mais precisa da IA</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-check-circle text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Questões Resolvidas</p>
+                                <p id="questionsAnswered" class="text-2xl font-bold text-gray-900">0</p>
                             </div>
                         </div>
-
-                        <!-- Informações Adicionais -->
-                        <div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">ℹ️ Informações Adicionais</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Experiência com Concursos</label>
-                                    <select id="experienciaConcursos" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                        <option value="nenhuma">Primeira vez</option>
-                                        <option value="pouca">Já fiz alguns concursos</option>
-                                        <option value="moderada">Tenho experiência moderada</option>
-                                        <option value="muita">Sou experiente em concursos</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Maior Dificuldade</label>
-                                    <select id="maiorDificuldade" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                        <option value="portugues">Português</option>
-                                        <option value="matematica">Matemática</option>
-                                        <option value="direito">Direito</option>
-                                        <option value="conhecimentos-especificos">Conhecimentos Específicos</option>
-                                        <option value="redacao">Redação</option>
-                                        <option value="atualidades">Atualidades</option>
-                                        <option value="tempo">Gestão do tempo</option>
-                                        <option value="ansiedade">Controle da ansiedade</option>
-                                    </select>
-                                </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-percentage text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Taxa de Acerto</p>
+                                <p id="accuracyRate" class="text-2xl font-bold text-gray-900">0%</p>
                             </div>
                         </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-trophy text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Ranking</p>
+                                <p id="userRanking" class="text-2xl font-bold text-gray-900">#0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="text-center">
-                            <button type="submit" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-semibold text-lg">
-                                🤖 Gerar Plano de Estudos com IA
+            <!-- Materials Section -->
+            <div id="studentMaterialsSection" class="student-section" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Materiais de Estudo</h2>
+                    <div id="materialsContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="study-material rounded-lg p-6 card-hover">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-book text-4xl text-purple-600 mb-2"></i>
+                                <h3 class="text-lg font-semibold">Configure seu concurso</h3>
+                                <p class="text-gray-600 text-sm">Primeiro configure seu concurso no Dashboard para ver os materiais</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulations Section -->
+            <div id="studentSimulationsSection" class="student-section" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Simulados</h2>
+                    <div id="simulationsContent">
+                        <div class="text-center py-12">
+                            <i class="fas fa-clipboard-list text-6xl text-gray-400 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Configure seu concurso primeiro</h3>
+                            <p class="text-gray-500">Vá para o Dashboard e configure seu concurso para ver os simulados disponíveis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Section -->
+            <div id="studentChatSection" class="student-section" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6 h-96 flex flex-col">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Chat com IA - Professor Virtual</h2>
+                    
+                    <div id="chatNotConfigured" class="flex-1 flex items-center justify-center text-center">
+                        <div>
+                            <i class="fas fa-robot text-6xl text-gray-400 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Configure sua IA primeiro</h3>
+                            <p class="text-gray-500 mb-4">Vá para o Dashboard e conecte sua IA Gemini gratuita</p>
+                            <button onclick="showStudentSection('dashboard')" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90">
+                                Configurar IA
                             </button>
                         </div>
-                    </form>
-                </div>
-
-                <!-- Análise da IA -->
-                <div id="analiseIA" class="bg-white rounded-xl p-8 shadow-lg mt-8 hidden">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-4xl">🤖</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Análise Inteligente Concluída!</h3>
-                        <p class="text-gray-600">A IA analisou todos os dados e criou seu plano personalizado</p>
                     </div>
-
-                    <!-- Análise do Local -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
-                            <h4 class="text-lg font-semibold text-blue-800 mb-4">🌍 Análise do Local</h4>
-                            <div id="analiseLocal" class="space-y-3 text-sm">
-                                <!-- Será preenchido pela IA -->
+                    
+                    <div id="chatConfigured" class="flex-1 flex flex-col" style="display: none;">
+                        <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
+                            <div class="chat-message mb-4">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-robot text-white text-sm"></i>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                                        <p class="text-gray-800">Olá! Sou seu professor virtual. Como posso ajudar você hoje? Posso explicar matérias, tirar dúvidas e criar exercícios personalizados!</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
-                            <h4 class="text-lg font-semibold text-green-800 mb-4">📊 Estatísticas do Concurso</h4>
-                            <div id="estatisticasConcurso" class="space-y-3 text-sm">
-                                <!-- Será preenchido pela IA -->
-                            </div>
+                        <div class="flex">
+                            <input type="text" id="chatInput" placeholder="Digite sua pergunta..." 
+                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                   onkeypress="if(event.key==='Enter') sendMessage()">
+                            <button onclick="sendMessage()" class="gradient-bg text-white px-6 py-3 rounded-r-lg hover:opacity-90 transition duration-300">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
                         </div>
-                    </div>
-
-                    <!-- Cronograma Inteligente -->
-                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg mb-8">
-                        <h4 class="text-lg font-semibold text-purple-800 mb-4">📅 Cronograma Inteligente</h4>
-                        <div id="cronogramaInteligente" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Será preenchido pela IA -->
-                        </div>
-                    </div>
-
-                    <!-- Temas Prováveis para Redação -->
-                    <div class="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-lg mb-8">
-                        <h4 class="text-lg font-semibold text-orange-800 mb-4">✍️ Temas Prováveis para Redação</h4>
-                        <div id="temasRedacao" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Será preenchido pela IA -->
-                        </div>
-                    </div>
-
-                    <!-- Alertas e Recomendações -->
-                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg">
-                        <h4 class="text-lg font-semibold text-yellow-800 mb-4">⚠️ Alertas e Recomendações</h4>
-                        <div id="alertasRecomendacoes" class="space-y-3">
-                            <!-- Será preenchido pela IA -->
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-8">
-                        <button onclick="salvarPerfilConcurso()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                            Salvar Perfil e Começar Estudos
-                        </button>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Dashboard Section (existing content) -->
-        <section id="dashboard" class="section-content hidden">
-            <div class="container mx-auto px-6 py-8">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Bem-vindo ao seu Dashboard</h2>
-                    <p class="text-gray-600">Acompanhe seu progresso e continue sua jornada rumo à aprovação!</p>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-sm">Dias de Estudo</p>
-                                <p class="text-2xl font-bold text-blue-600" id="studyDays">0</p>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">📅</span>
+            <!-- Progress Section -->
+            <div id="studentProgressSection" class="student-section" style="display: none;">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Progresso por Matéria</h2>
+                        <div id="subjectProgress" class="space-y-4">
+                            <div class="text-center py-8">
+                                <i class="fas fa-chart-bar text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600">Configure seu concurso para ver o progresso</p>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-sm">Simulados Feitos</p>
-                                <p class="text-2xl font-bold text-green-600" id="simuladosCount">0</p>
-                            </div>
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">📝</span>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Histórico de Simulados</h2>
+                        <div id="simulationHistory" class="space-y-4">
+                            <div class="text-center py-8">
+                                <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600">Nenhum simulado realizado ainda</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-sm">Taxa de Acerto</p>
-                                <p class="text-2xl font-bold text-purple-600" id="successRate">0%</p>
-                            </div>
-                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">🎯</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-sm">Dias até a Prova</p>
-                                <p class="text-2xl font-bold text-orange-600" id="diasProva">--</p>
-                            </div>
-                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">⏰</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Progress Section -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-xl font-semibold mb-4">Progresso por Matéria</h3>
-                        <div class="space-y-4" id="progressoMaterias">
-                            <!-- Será preenchido dinamicamente -->
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-xl font-semibold mb-4">Cronograma de Hoje</h3>
-                        <div class="space-y-3" id="cronogramaHoje">
-                            <!-- Será preenchido dinamicamente -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <h3 class="text-xl font-semibold mb-4">Ações Rápidas</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <button onclick="showSection('perfil-concurso')" class="p-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all card-hover">
-                            <span class="text-2xl mb-2 block">📋</span>
-                            <p class="font-semibold">Perfil do Concurso</p>
-                            <p class="text-sm opacity-90">Configure seu concurso</p>
-                        </button>
-                        <button onclick="showSection('simulados')" class="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all card-hover">
-                            <span class="text-2xl mb-2 block">🎯</span>
-                            <p class="font-semibold">Fazer Simulado</p>
-                            <p class="text-sm opacity-90">Teste seus conhecimentos</p>
-                        </button>
-                        <button onclick="showSection('redacao')" class="p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all card-hover">
-                            <span class="text-2xl mb-2 block">✍️</span>
-                            <p class="font-semibold">Treinar Redação</p>
-                            <p class="text-sm opacity-90">Pratique sua escrita</p>
-                        </button>
-                        <button onclick="showSection('chat')" class="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all card-hover">
-                            <span class="text-2xl mb-2 block">🤖</span>
-                            <p class="font-semibold">Chat com IA</p>
-                            <p class="text-sm opacity-90">Tire suas dúvidas</p>
-                        </button>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- Other sections remain the same... -->
-        <!-- (Diagnóstico, Simulados, Redação, Chat sections from previous code) -->
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Adicionar Usuário</h2>
+            <form id="addUserForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                    <input type="text" id="newUserName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="newUserEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <input type="password" id="newUserPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Plano</label>
+                    <select id="newUserPlan" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <option value="basic">Básico</option>
+                        <option value="premium">Premium</option>
+                        <option value="vip">VIP</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Data de Expiração</label>
+                    <input type="date" id="newUserExpiry" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" onclick="hideAddUserModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90">
+                        Adicionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Simulation Modal -->
+    <div id="simulationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="simulationTitle" class="text-2xl font-bold text-gray-800">Simulado</h2>
+                <button onclick="closeSimulation()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="simulationContent">
+                <!-- Simulation content will be loaded here -->
+            </div>
+        </div>
     </div>
 
     <script>
-        // Firebase Configuration (VOCÊ VAI SUBSTITUIR PELOS SEUS DADOS)
+        // Firebase Configuration - SUBSTITUA PELAS SUAS CHAVES
        const firebaseConfig = {
-    apiKey: "AIzaSyCpR8xBkgo4zA9m0-MSl2pI09KsVEKsR9Y",
-    authDomain: "concurso-turbo-ia.firebaseapp.com",
-    projectId: "concurso-turbo-ia",
-    storageBucket: "concurso-turbo-ia.firebasestorage.app",
-    messagingSenderId: "559351714048",
-    appId: "1:559351714048:web:18894243f16acae36763e5"
-  };
+  apiKey: "AIzaSyCpR8xBkgo4zA9m0-MSl2pI09KsVEKsR9Y",
+  authDomain: "concurso-turbo-ia.firebaseapp.com",
+  projectId: "concurso-turbo-ia",
+  storageBucket: "concurso-turbo-ia.firebasestorage.app",
+  messagingSenderId: "559351714048",
+  appId: "1:559351714048:web:18894243f16acae36763e5"
+};
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // Gemini API Configuration
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        let userGeminiKey = null;
+
         // Global Variables
         let currentUser = null;
-        let isAdmin = false;
-        let concursoProfile = null;
+        let currentContest = null;
+        let currentArea = null;
+        let studyMaterials = {};
+        let questionBank = {};
+
+        // Contest and Area Configuration
+        const contestAreas = {
+            'enem': ['Linguagens', 'Matemática', 'Ciências da Natureza', 'Ciências Humanas', 'Redação'],
+            'vestibular': ['Português', 'Matemática', 'Física', 'Química', 'Biologia', 'História', 'Geografia'],
+            'concurso-publico': ['Português', 'Matemática', 'Direito Constitucional', 'Direito Administrativo', 'Informática'],
+            'oab': ['Direito Constitucional', 'Direito Civil', 'Direito Penal', 'Direito do Trabalho', 'Ética Profissional'],
+            'medicina': ['Anatomia', 'Fisiologia', 'Patologia', 'Farmacologia', 'Clínica Médica']
+        };
+
+        // Study Materials Database
+        const studyMaterialsDB = {
+            'enem': {
+                'Matemática': {
+                    topics: ['Álgebra', 'Geometria', 'Estatística', 'Funções', 'Trigonometria'],
+                    videos: [
+                        { title: 'Função Quadrática - Teoria Completa', url: 'https://youtube.com/watch?v=exemplo1', duration: '45min' },
+                        { title: 'Geometria Plana - Exercícios', url: 'https://youtube.com/watch?v=exemplo2', duration: '30min' }
+                    ],
+                    pdfs: [
+                        { title: 'Resumo de Funções', url: '#', pages: 15 },
+                        { title: 'Exercícios de Geometria', url: '#', pages: 25 }
+                    ]
+                },
+                'Português': {
+                    topics: ['Gramática', 'Literatura', 'Interpretação de Texto', 'Redação'],
+                    videos: [
+                        { title: 'Análise Sintática Completa', url: 'https://youtube.com/watch?v=exemplo3', duration: '60min' },
+                        { title: 'Literatura Brasileira - Romantismo', url: 'https://youtube.com/watch?v=exemplo4', duration: '40min' }
+                    ],
+                    pdfs: [
+                        { title: 'Guia de Redação ENEM', url: '#', pages: 30 },
+                        { title: 'Resumo de Literatura', url: '#', pages: 20 }
+                    ]
+                }
+            }
+        };
+
+        // Question Bank
+        const questionBankDB = {
+            'enem': {
+                'Matemática': [
+                    {
+                        question: "Uma função quadrática f(x) = ax² + bx + c tem vértice no ponto (2, -1) e passa pelo ponto (0, 3). Qual o valor de a?",
+                        options: ["a) 1", "b) 2", "c) -1", "d) -2", "e) 3"],
+                        correct: 0,
+                        explanation: "Usando as condições dadas: vértice (2, -1) e ponto (0, 3), podemos determinar que a = 1."
+                    },
+                    {
+                        question: "Em um triângulo retângulo, os catetos medem 3 cm e 4 cm. Qual a medida da hipotenusa?",
+                        options: ["a) 5 cm", "b) 6 cm", "c) 7 cm", "d) 8 cm", "e) 9 cm"],
+                        correct: 0,
+                        explanation: "Pelo teorema de Pitágoras: h² = 3² + 4² = 9 + 16 = 25, logo h = 5 cm."
+                    }
+                ],
+                'Português': [
+                    {
+                        question: "Qual figura de linguagem está presente na frase: 'O vento sussurrava segredos'?",
+                        options: ["a) Metáfora", "b) Personificação", "c) Hipérbole", "d) Ironia", "e) Antítese"],
+                        correct: 1,
+                        explanation: "Personificação: atribuição de características humanas (sussurrar segredos) a seres inanimados (vento)."
+                    }
+                ]
+            }
+        };
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                checkAuthState();
+            }, 2000);
         });
 
-        function initializeApp() {
-            // Check authentication state
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    loadUserData(user);
-                } else {
-                    showLoginScreen();
-                }
-            });
-        }
-
-        function showLoginScreen() {
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('adminPanel').classList.add('hidden');
-        }
-
-        // Authentication Functions
-        function showAdminLogin() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('adminLoginScreen').classList.remove('hidden');
-        }
-
-        function showUserLogin() {
-            document.getElementById('adminLoginScreen').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-        }
-
-        async function loadUserData(user) {
-            try {
+        // Auth State Observer
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 if (userDoc.exists) {
                     const userData = userDoc.data();
-                    
-                    // Check if subscription is active
-                    if (new Date(userData.expiryDate) < new Date()) {
-                        alert('Sua assinatura expirou! Entre em contato para renovar.');
-                        auth.signOut();
-                        return;
-                    }
-
-                    currentUser = { ...userData, uid: user.uid };
-                    document.getElementById('currentUserName').textContent = userData.name;
-                    
                     if (userData.isAdmin) {
-                        isAdmin = true;
-                        showAdminPanel();
+                        showAdminDashboard(userData);
                     } else {
-                        showMainApp();
+                        showStudentDashboard(userData);
                     }
-                } else {
-                    // User document doesn't exist, sign out
-                    auth.signOut();
                 }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                auth.signOut();
+            } else {
+                showLoginScreen();
+            }
+        });
+
+        function checkAuthState() {
+            const user = auth.currentUser;
+            if (!user) {
+                showLoginScreen();
             }
         }
 
-        function showMainApp() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('adminLoginScreen').classList.add('hidden');
-            document.getElementById('adminPanel').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            showSection('perfil-concurso');
-            loadUserProgress();
+        function showLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('studentDashboard').style.display = 'none';
         }
 
-        function showAdminPanel() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('adminLoginScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('adminPanel').classList.remove('hidden');
-            updateAdminStats();
-            loadUsersTable();
+        function showAdminDashboard(userData) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            document.getElementById('studentDashboard').style.display = 'none';
+            document.getElementById('adminName').textContent = userData.name;
+            loadAdminData();
         }
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        function showStudentDashboard(userData) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('studentDashboard').style.display = 'block';
+            document.getElementById('studentName').textContent = userData.name;
+            loadStudentData(userData);
+        }
+
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('loginUser').value;
+            const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-
+            
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-                // User will be automatically loaded by onAuthStateChanged
             } catch (error) {
-                alert('Erro no login: ' + error.message);
+                document.getElementById('loginError').textContent = 'Email ou senha incorretos';
+                document.getElementById('loginError').classList.remove('hidden');
             }
         });
 
-        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('adminUser').value;
-            const password = document.getElementById('adminPassword').value;
-
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
-                
-                if (userDoc.exists && userDoc.data().isAdmin) {
-                    // Admin login successful - handled by onAuthStateChanged
-                } else {
-                    alert('Acesso negado. Você não é um administrador.');
-                    auth.signOut();
-                }
-            } catch (error) {
-                alert('Credenciais de administrador incorretas!');
-            }
-        });
-
+        // Logout Function
         function logout() {
-            auth.signOut().then(() => {
-                currentUser = null;
-                isAdmin = false;
-                showLoginScreen();
-            });
+            auth.signOut();
         }
 
         // Admin Functions
-        document.getElementById('createUserForm').addEventListener('submit', async function(e) {
+        async function loadAdminData() {
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                const users = [];
+                let activeUsers = 0;
+                
+                usersSnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    if (!userData.isAdmin) {
+                        users.push({ id: doc.id, ...userData });
+                        if (userData.active) activeUsers++;
+                    }
+                });
+
+                document.getElementById('totalUsers').textContent = users.length;
+                document.getElementById('activeUsers').textContent = activeUsers;
+                document.getElementById('totalSimulations').textContent = Math.floor(Math.random() * 500) + 100;
+                document.getElementById('approvalRate').textContent = Math.floor(Math.random() * 30) + 70 + '%';
+
+                displayUsersTable(users);
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+            }
+        }
+
+        function displayUsersTable(users) {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            ${user.plan}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${user.active ? 'Ativo' : 'Inativo'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="toggleUserStatus('${user.id}', ${!user.active})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                            ${user.active ? 'Desativar' : 'Ativar'}
+                        </button>
+                        <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-900">
+                            Excluir
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'flex';
+        }
+
+        function hideAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+            document.getElementById('addUserForm').reset();
+        }
+
+        // Add User Form Handler
+        document.getElementById('addUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const name = document.getElementById('newUserName').value;
             const email = document.getElementById('newUserEmail').value;
             const password = document.getElementById('newUserPassword').value;
-            const name = document.getElementById('newUserName').value;
             const plan = document.getElementById('newUserPlan').value;
             const expiryDate = document.getElementById('newUserExpiry').value;
 
             try {
-                // Create user in Firebase Auth
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // Create user document in Firestore
                 await db.collection('users').doc(user.uid).set({
                     name: name,
                     email: email,
                     plan: plan,
                     expiryDate: expiryDate,
-                    createdDate: new Date().toISOString().split('T')[0],
                     active: true,
-                    isAdmin: false
+                    isAdmin: false,
+                    createdDate: new Date().toISOString().split('T')[0]
                 });
 
-                // Clear form
-                document.getElementById('createUserForm').reset();
-                alert('Usuário criado com sucesso!');
-                
-                // Refresh admin data
-                updateAdminStats();
-                loadUsersTable();
-                
+                hideAddUserModal();
+                loadAdminData();
+                alert('Usuário adicionado com sucesso!');
             } catch (error) {
-                alert('Erro ao criar usuário: ' + error.message);
+                alert('Erro ao adicionar usuário: ' + error.message);
             }
         });
 
-        async function updateAdminStats() {
+        async function toggleUserStatus(userId, newStatus) {
             try {
-                const usersSnapshot = await db.collection('users').get();
-                const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                const activeUsers = users.filter(u => u.active && new Date(u.expiryDate) >= new Date()).length;
-                const monthlyUsers = users.filter(u => u.plan === 'monthly' && u.active).length;
-                const annualUsers = users.filter(u => u.plan === 'annual' && u.active).length;
-                const monthlyRevenue = (monthlyUsers * 30) + (annualUsers * 199 / 12);
-                const today = new Date().toISOString().split('T')[0];
-                const newToday = users.filter(u => u.createdDate === today).length;
-
-                document.getElementById('activeUsers').textContent = activeUsers;
-                document.getElementById('monthlyRevenue').textContent = `R$ ${monthlyRevenue.toFixed(2)}`;
-                document.getElementById('annualSubs').textContent = annualUsers;
-                document.getElementById('newToday').textContent = newToday;
-            } catch (error) {
-                console.error('Error updating admin stats:', error);
-            }
-        }
-
-        async function loadUsersTable() {
-            try {
-                const usersSnapshot = await db.collection('users').where('isAdmin', '==', false).get();
-                const tbody = document.getElementById('usersTableBody');
-                tbody.innerHTML = '';
-
-                usersSnapshot.forEach(doc => {
-                    const user = { id: doc.id, ...doc.data() };
-                    const isExpired = new Date(user.expiryDate) < new Date();
-                    const statusClass = isExpired ? 'text-red-600' : 'text-green-600';
-                    const statusText = isExpired ? 'Expirado' : 'Ativo';
-                    const planText = user.plan === 'monthly' ? 'Mensal' : 'Anual';
-
-                    const row = document.createElement('tr');
-                    row.className = 'border-b hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="px-4 py-3 text-sm">${user.name}</td>
-                        <td class="px-4 py-3 text-sm">${user.email}</td>
-                        <td class="px-4 py-3 text-sm">${planText}</td>
-                        <td class="px-4 py-3 text-sm">${new Date(user.expiryDate).toLocaleDateString('pt-BR')}</td>
-                        <td class="px-4 py-3 text-sm ${statusClass} font-semibold">${statusText}</td>
-                        <td class="px-4 py-3 text-sm">
-                            <button onclick="editUser('${user.id}')" class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
-                            <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-800">Excluir</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
+                await db.collection('users').doc(userId).update({
+                    active: newStatus
                 });
+                loadAdminData();
             } catch (error) {
-                console.error('Error loading users table:', error);
-            }
-        }
-
-        async function editUser(userId) {
-            try {
-                const userDoc = await db.collection('users').doc(userId).get();
-                if (userDoc.exists) {
-                    const user = userDoc.data();
-                    const newExpiry = prompt('Nova data de vencimento (YYYY-MM-DD):', user.expiryDate);
-                    if (newExpiry) {
-                        await db.collection('users').doc(userId).update({
-                            expiryDate: newExpiry
-                        });
-                        loadUsersTable();
-                        updateAdminStats();
-                        alert('Usuário atualizado com sucesso!');
-                    }
-                }
-            } catch (error) {
-                alert('Erro ao editar usuário: ' + error.message);
+                alert('Erro ao alterar status do usuário');
             }
         }
 
@@ -796,293 +803,705 @@
             if (confirm('Tem certeza que deseja excluir este usuário?')) {
                 try {
                     await db.collection('users').doc(userId).delete();
-                    loadUsersTable();
-                    updateAdminStats();
-                    alert('Usuário excluído com sucesso!');
+                    loadAdminData();
                 } catch (error) {
-                    alert('Erro ao excluir usuário: ' + error.message);
+                    alert('Erro ao excluir usuário');
                 }
             }
         }
 
-        // Concurso Profile Functions
-        document.getElementById('concursoForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Student Functions
+        function loadStudentData(userData) {
+            // Load AI configuration if exists
+            if (userData.geminiApiKey) {
+                userGeminiKey = userData.geminiApiKey;
+                document.getElementById('geminiApiKey').value = userGeminiKey;
+                document.getElementById('aiStatus').classList.remove('hidden');
+                document.getElementById('aiConfigSection').style.display = 'none';
+                updateChatInterface(true);
+            } else {
+                updateChatInterface(false);
+            }
+
+            // Load contest configuration if exists
+            if (userData.contest && userData.area) {
+                currentContest = userData.contest;
+                currentArea = userData.area;
+                document.getElementById('contestSelect').value = currentContest;
+                updateAreaOptions();
+                document.getElementById('areaSelect').value = currentArea;
+                loadStudyPlan();
+                loadMaterials();
+                loadSimulations();
+            }
+
+            // Load stats
+            document.getElementById('studyHours').textContent = userData.studyHours || '0h';
+            document.getElementById('questionsAnswered').textContent = userData.questionsAnswered || '0';
+            document.getElementById('accuracyRate').textContent = (userData.accuracyRate || 0) + '%';
+            document.getElementById('userRanking').textContent = '#' + (userData.ranking || 'N/A');
+        }
+
+        // AI Configuration Functions
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById('geminiApiKey');
+            const icon = document.getElementById('toggleIcon');
             
-            const formData = {
-                nomeConcurso: document.getElementById('nomeConcurso').value,
-                nivelEscolaridade: document.getElementById('nivelEscolaridade').value,
-                areaAtuacao: document.getElementById('areaAtuacao').value,
-                localConcurso: document.getElementById('localConcurso').value,
-                dataProva: document.getElementById('dataProva').value,
-                tempoDisponivel: document.getElementById('tempoDisponivel').value,
-                conteudoProgramatico: document.getElementById('conteudoProgramatico').value,
-                experienciaConcursos: document.getElementById('experienciaConcursos').value,
-                maiorDificuldade: document.getElementById('maiorDificuldade').value
-            };
-
-            // Simulate AI processing
-            processarComIA(formData);
-        });
-
-        function processarComIA(dados) {
-            // Show loading
-            const submitBtn = document.querySelector('#concursoForm button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '🤖 Processando com IA...';
-            submitBtn.disabled = true;
-
-            setTimeout(() => {
-                gerarAnaliseIA(dados);
-                document.getElementById('analiseIA').classList.remove('hidden');
-                document.getElementById('analiseIA').scrollIntoView({ behavior: 'smooth' });
-                
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }, 3000);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
-        function gerarAnaliseIA(dados) {
-            // Análise do Local
-            const analiseLocal = document.getElementById('analiseLocal');
-            analiseLocal.innerHTML = `
-                <div class="flex items-center mb-2">
-                    <span class="text-blue-600 mr-2">📍</span>
-                    <span class="font-semibold">Local: ${dados.localConcurso}</span>
-                </div>
-                <div class="text-gray-700">
-                    <p>• População estimada: ${Math.floor(Math.random() * 2000000 + 500000).toLocaleString()} habitantes</p>
-                    <p>• IDH: ${(0.7 + Math.random() * 0.2).toFixed(3)}</p>
-                    <p>• Principais desafios locais: Mobilidade urbana, educação digital, sustentabilidade</p>
-                    <p>• Temas prováveis: Desenvolvimento local, políticas públicas, inclusão social</p>
-                </div>
-            `;
-
-            // Estatísticas do Concurso
-            const estatisticas = document.getElementById('estatisticasConcurso');
-            const diasRestantes = Math.ceil((new Date(dados.dataProva) - new Date()) / (1000 * 60 * 60 * 24));
-            estatisticas.innerHTML = `
-                <div class="space-y-2">
-                    <div class="flex justify-between">
-                        <span>Dias até a prova:</span>
-                        <span class="font-semibold text-orange-600">${diasRestantes} dias</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Tempo de estudo diário:</span>
-                        <span class="font-semibold">${dados.tempoDisponivel}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Nível de dificuldade:</span>
-                        <span class="font-semibold text-purple-600">Alto</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Concorrência estimada:</span>
-                        <span class="font-semibold text-red-600">${Math.floor(Math.random() * 50 + 20)}/vaga</span>
-                    </div>
-                </div>
-            `;
-
-            // Cronograma Inteligente
-            const cronograma = document.getElementById('cronogramaInteligente');
-            const materias = extrairMaterias(dados.conteudoProgramatico);
-            cronograma.innerHTML = materias.map(materia => `
-                <div class="bg-white p-4 rounded-lg border border-purple-200">
-                    <h5 class="font-semibold text-purple-800 mb-2">${materia.nome}</h5>
-                    <div class="text-sm text-gray-600">
-                        <p>Tempo: ${materia.tempo}%</p>
-                        <p>Prioridade: ${materia.prioridade}</p>
-                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                            <div class="bg-purple-600 h-2 rounded-full" style="width: ${materia.tempo}%"></div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Temas para Redação
-            const temasRedacao = document.getElementById('temasRedacao');
-            const temas = gerarTemasRedacao(dados.areaAtuacao, dados.localConcurso);
-            temasRedacao.innerHTML = temas.map(tema => `
-                <div class="bg-white p-4 rounded-lg border border-orange-200">
-                    <h5 class="font-semibold text-orange-800 mb-2">${tema.titulo}</h5>
-                    <p class="text-sm text-gray-600">${tema.descricao}</p>
-                    <span class="inline-block mt-2 px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">${tema.categoria}</span>
-                </div>
-            `).join('');
-
-            // Alertas e Recomendações
-            const alertas = document.getElementById('alertasRecomendacoes');
-            alertas.innerHTML = `
-                <div class="space-y-3">
-                    <div class="flex items-start space-x-3 p-3 bg-yellow-100 rounded-lg">
-                        <span class="text-yellow-600">⚠️</span>
-                        <div>
-                            <p class="font-semibold text-yellow-800">Tempo Limitado</p>
-                            <p class="text-sm text-yellow-700">Com apenas ${diasRestantes} dias, foque nas matérias de maior peso na prova.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 p-3 bg-blue-100 rounded-lg">
-                        <span class="text-blue-600">💡</span>
-                        <div>
-                            <p class="font-semibold text-blue-800">Dica Personalizada</p>
-                            <p class="text-sm text-blue-700">Baseado no seu perfil, recomendamos 2 simulados por semana e 1 redação a cada 3 dias.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 p-3 bg-green-100 rounded-lg">
-                        <span class="text-green-600">✅</span>
-                        <div>
-                            <p class="font-semibold text-green-800">Ponto Forte Identificado</p>
-                            <p class="text-sm text-green-700">Sua experiência em ${dados.areaAtuacao} será uma vantagem nos conhecimentos específicos.</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Save profile
-            concursoProfile = dados;
-            concursoProfile.diasRestantes = diasRestantes;
-            concursoProfile.materias = materias;
-            concursoProfile.temasRedacao = temas;
-        }
-
-        function extrairMaterias(conteudo) {
-            // Simulate AI extraction of subjects from content
-            const materiasComuns = [
-                { nome: 'Português', tempo: 25, prioridade: 'Alta' },
-                { nome: 'Matemática', tempo: 20, prioridade: 'Média' },
-                { nome: 'Conhecimentos Específicos', tempo: 30, prioridade: 'Alta' },
-                { nome: 'Atualidades', tempo: 15, prioridade: 'Média' },
-                { nome: 'Informática', tempo: 10, prioridade: 'Baixa' }
-            ];
+        async function saveGeminiKey() {
+            const apiKey = document.getElementById('geminiApiKey').value.trim();
             
-            return materiasComuns;
-        }
+            if (!apiKey) {
+                alert('Por favor, insira sua chave da API');
+                return;
+            }
 
-        function gerarTemasRedacao(area, local) {
-            const temas = {
-                'educacao': [
-                    { titulo: 'Educação Digital e Inclusão', descricao: 'O papel da tecnologia na educação pública', categoria: 'Tecnologia' },
-                    { titulo: 'Formação Continuada de Professores', descricao: 'Importância da capacitação docente', categoria: 'Educação' }
-                ],
-                'saude': [
-                    { titulo: 'Saúde Pública Pós-Pandemia', descricao: 'Desafios e oportunidades no SUS', categoria: 'Saúde' },
-                    { titulo: 'Prevenção e Promoção da Saúde', descricao: 'Estratégias de medicina preventiva', categoria: 'Saúde' }
-                ],
-                'administrativa': [
-                    { titulo: 'Modernização da Administração Pública', descricao: 'Digitalização e eficiência administrativa', categoria: 'Gestão' },
-                    { titulo: 'Transparência e Participação Cidadã', descricao: 'Governo aberto e controle social', categoria: 'Cidadania' }
-                ]
-            };
+            if (!apiKey.startsWith('AIza')) {
+                alert('Chave inválida. A chave deve começar com "AIza"');
+                return;
+            }
 
-            return temas[area] || temas['administrativa'];
-        }
+            try {
+                // Test the API key
+                const testResponse = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: 'Teste'
+                            }]
+                        }]
+                    })
+                });
 
-        async function salvarPerfilConcurso() {
-            if (currentUser && concursoProfile) {
-                try {
-                    // Save to Firestore
+                if (testResponse.ok || testResponse.status === 400) { // 400 is ok for empty content
+                    // Save to user profile
                     await db.collection('users').doc(currentUser.uid).update({
-                        concursoProfile: concursoProfile
+                        geminiApiKey: apiKey
                     });
+
+                    userGeminiKey = apiKey;
+                    document.getElementById('aiStatus').classList.remove('hidden');
+                    document.getElementById('aiConfigSection').style.display = 'none';
+                    updateChatInterface(true);
                     
-                    // Update local user data
-                    currentUser.concursoProfile = concursoProfile;
-                    
-                    // Update dashboard
-                    updateDashboardWithProfile();
-                    
-                    alert('Perfil do concurso salvo com sucesso! Agora você pode acessar todas as funcionalidades personalizadas.');
-                    showSection('dashboard');
-                } catch (error) {
-                    alert('Erro ao salvar perfil: ' + error.message);
+                    alert('IA conectada com sucesso! 🎉');
+                } else {
+                    throw new Error('Chave inválida');
                 }
+            } catch (error) {
+                alert('Erro ao conectar com a IA. Verifique se a chave está correta.');
             }
         }
 
-        function updateDashboardWithProfile() {
-            if (concursoProfile) {
-                document.getElementById('diasProva').textContent = concursoProfile.diasRestantes;
-                
-                // Update progress by subject
-                const progressContainer = document.getElementById('progressoMaterias');
-                if (progressContainer && concursoProfile.materias) {
-                    progressContainer.innerHTML = concursoProfile.materias.map(materia => `
-                        <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm font-medium">${materia.nome}</span>
-                                <span class="text-sm text-gray-500">${Math.floor(Math.random() * 40 + 30)}%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-600 h-2 rounded-full progress-bar" style="width: ${Math.floor(Math.random() * 40 + 30)}%"></div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-
-                // Update today's schedule
-                const cronogramaContainer = document.getElementById('cronogramaHoje');
-                if (cronogramaContainer) {
-                    cronogramaContainer.innerHTML = `
-                        <div class="flex items-center p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
-                            <span class="text-green-600 mr-3">✓</span>
-                            <div>
-                                <p class="font-medium">${concursoProfile.materias[0]?.nome || 'Português'} - Revisão</p>
-                                <p class="text-sm text-gray-500">09:00 - 10:30 (Concluído)</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500 pulse-animation">
-                            <span class="text-blue-600 mr-3">▶</span>
-                            <div>
-                                <p class="font-medium">Simulado - ${concursoProfile.materias[1]?.nome || 'Matemática'}</p>
-                                <p class="text-sm text-gray-500">11:00 - 12:00 (Em andamento)</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
-                            <span class="text-gray-400 mr-3">○</span>
-                            <div>
-                                <p class="font-medium">Redação - Tema ${concursoProfile.areaAtuacao}</p>
-                                <p class="text-sm text-gray-500">14:00 - 15:30 (Pendente)</p>
-                            </div>
-                        </div>
-                    `;
-                }
+        function updateChatInterface(isConfigured) {
+            const notConfigured = document.getElementById('chatNotConfigured');
+            const configured = document.getElementById('chatConfigured');
+            
+            if (isConfigured) {
+                notConfigured.style.display = 'none';
+                configured.style.display = 'flex';
+            } else {
+                notConfigured.style.display = 'flex';
+                configured.style.display = 'none';
             }
         }
 
-        async function loadUserProgress() {
-            if (currentUser && currentUser.concursoProfile) {
-                concursoProfile = currentUser.concursoProfile;
-                updateDashboardWithProfile();
-            }
-        }
-
-        // Navigation
-        function showSection(sectionName) {
+        function showStudentSection(section) {
             // Hide all sections
-            document.querySelectorAll('.section-content').forEach(section => {
-                section.classList.add('hidden');
+            document.querySelectorAll('.student-section').forEach(el => {
+                el.style.display = 'none';
             });
-            
+
             // Show selected section
-            const section = document.getElementById(sectionName);
-            if (section) {
-                section.classList.remove('hidden');
+            document.getElementById('student' + section.charAt(0).toUpperCase() + section.slice(1) + 'Section').style.display = 'block';
+
+            // Update navigation
+            document.querySelectorAll('.student-nav-btn').forEach(btn => {
+                btn.classList.remove('border-purple-500', 'text-purple-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            event.target.classList.remove('border-transparent', 'text-gray-500');
+            event.target.classList.add('border-purple-500', 'text-purple-600');
+        }
+
+        // Contest Configuration
+        document.getElementById('contestSelect').addEventListener('change', updateAreaOptions);
+
+        function updateAreaOptions() {
+            const contest = document.getElementById('contestSelect').value;
+            const areaSelect = document.getElementById('areaSelect');
+            
+            areaSelect.innerHTML = '<option value="">Selecione uma área</option>';
+            
+            if (contest && contestAreas[contest]) {
+                contestAreas[contest].forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area;
+                    option.textContent = area;
+                    areaSelect.appendChild(option);
+                });
             }
         }
 
-        // Auto-set expiry date for new users
-        document.getElementById('newUserPlan').addEventListener('change', function() {
-            const plan = this.value;
-            const expiryInput = document.getElementById('newUserExpiry');
-            const today = new Date();
-            
-            if (plan === 'monthly') {
-                today.setMonth(today.getMonth() + 1);
-            } else if (plan === 'annual') {
-                today.setFullYear(today.getFullYear() + 1);
+        async function saveContestConfig() {
+            const contest = document.getElementById('contestSelect').value;
+            const area = document.getElementById('areaSelect').value;
+
+            if (!contest || !area) {
+                alert('Por favor, selecione o concurso e a área');
+                return;
             }
+
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    contest: contest,
+                    area: area
+                });
+
+                currentContest = contest;
+                currentArea = area;
+
+                loadStudyPlan();
+                loadMaterials();
+                loadSimulations();
+                
+                alert('Configuração salva com sucesso!');
+            } catch (error) {
+                alert('Erro ao salvar configuração');
+            }
+        }
+
+        function loadStudyPlan() {
+            if (!currentContest || !currentArea) return;
+
+            const studyPlanSection = document.getElementById('studyPlanSection');
+            const studyPlanContent = document.getElementById('studyPlanContent');
             
-            expiryInput.value = today.toISOString().split('T')[0];
-        });
+            studyPlanSection.style.display = 'block';
+            
+            const materials = studyMaterialsDB[currentContest]?.[currentArea];
+            if (materials) {
+                studyPlanContent.innerHTML = materials.topics.map(topic => `
+                    <div class="bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg p-6 text-white card-hover">
+                        <h3 class="text-lg font-semibold mb-2">${topic}</h3>
+                        <p class="text-sm opacity-90 mb-4">Tópico essencial para ${currentArea}</p>
+                        <button onclick="studyTopic('${topic}')" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
+                            Estudar Agora
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadMaterials() {
+            if (!currentContest || !currentArea) return;
+
+            const materialsContent = document.getElementById('materialsContent');
+            const materials = studyMaterialsDB[currentContest]?.[currentArea];
+
+            if (materials) {
+                materialsContent.innerHTML = `
+                    <div class="study-material rounded-lg p-6 card-hover">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-video text-4xl text-red-600 mb-2"></i>
+                            <h3 class="text-lg font-semibold">Videoaulas</h3>
+                            <p class="text-gray-600 text-sm">${materials.videos.length} vídeos disponíveis</p>
+                        </div>
+                        <div class="space-y-2">
+                            ${materials.videos.map(video => `
+                                <div class="flex justify-between items-center p-2 bg-white rounded border">
+                                    <span class="text-sm">${video.title}</span>
+                                    <span class="text-xs text-gray-500">${video.duration}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="study-material rounded-lg p-6 card-hover">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-file-pdf text-4xl text-red-600 mb-2"></i>
+                            <h3 class="text-lg font-semibold">Material PDF</h3>
+                            <p class="text-gray-600 text-sm">${materials.pdfs.length} arquivos disponíveis</p>
+                        </div>
+                        <div class="space-y-2">
+                            ${materials.pdfs.map(pdf => `
+                                <div class="flex justify-between items-center p-2 bg-white rounded border">
+                                    <span class="text-sm">${pdf.title}</span>
+                                    <span class="text-xs text-gray-500">${pdf.pages} páginas</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="study-material rounded-lg p-6 card-hover">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-brain text-4xl text-purple-600 mb-2"></i>
+                            <h3 class="text-lg font-semibold">Exercícios IA</h3>
+                            <p class="text-gray-600 text-sm">Gerados pela inteligência artificial</p>
+                        </div>
+                        <button onclick="generateAIExercises()" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
+                            Gerar Exercícios
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function loadSimulations() {
+            if (!currentContest || !currentArea) return;
+
+            const simulationsContent = document.getElementById('simulationsContent');
+            
+            simulationsContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-clock text-3xl text-blue-600 mb-2"></i>
+                            <h3 class="text-lg font-semibold">Simulado Rápido</h3>
+                            <p class="text-gray-600 text-sm">10 questões - 15 minutos</p>
+                        </div>
+                        <button onclick="startSimulation('quick')" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
+                            Iniciar
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-clipboard-list text-3xl text-green-600 mb-2"></i>
+                            <h3 class="text-lg font-semibold">Simulado Médio</h3>
+                            <p class="text-gray-600 text-sm">25 questões - 45 minutos</p>
+                        </div>
+                        <button onclick="startSimulation('medium')" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
+                            Iniciar
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-trophy text-3xl text-yellow-600 mb-2"></i>
+                            <h3 class="text-lg font-semibold">Simulado Completo</h3>
+                            <p class="text-gray-600 text-sm">50 questões - 90 minutos</p>
+                        </div>
+                        <button onclick="startSimulation('full')" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
+                            Iniciar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Simulation Functions
+        function startSimulation(type) {
+            if (!currentContest || !currentArea) {
+                alert('Configure seu concurso primeiro');
+                return;
+            }
+
+            const questions = questionBankDB[currentContest]?.[currentArea] || [];
+            if (questions.length === 0) {
+                alert('Nenhuma questão disponível para esta área');
+                return;
+            }
+
+            let questionCount;
+            let timeLimit;
+            
+            switch(type) {
+                case 'quick':
+                    questionCount = Math.min(10, questions.length);
+                    timeLimit = 15;
+                    break;
+                case 'medium':
+                    questionCount = Math.min(25, questions.length);
+                    timeLimit = 45;
+                    break;
+                case 'full':
+                    questionCount = Math.min(50, questions.length);
+                    timeLimit = 90;
+                    break;
+            }
+
+            const selectedQuestions = questions.slice(0, questionCount);
+            showSimulationModal(selectedQuestions, timeLimit);
+        }
+
+        function showSimulationModal(questions, timeLimit) {
+            const modal = document.getElementById('simulationModal');
+            const title = document.getElementById('simulationTitle');
+            const content = document.getElementById('simulationContent');
+
+            title.textContent = `Simulado - ${currentArea} (${questions.length} questões)`;
+            
+            let currentQuestion = 0;
+            let answers = [];
+            let timeRemaining = timeLimit * 60; // Convert to seconds
+
+            function renderQuestion() {
+                const question = questions[currentQuestion];
+                content.innerHTML = `
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-sm text-gray-600">Questão ${currentQuestion + 1} de ${questions.length}</span>
+                            <span id="timer" class="text-sm font-semibold text-red-600">${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                            <div class="bg-purple-600 h-2 rounded-full progress-bar" style="width: ${((currentQuestion + 1) / questions.length) * 100}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-card bg-gray-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
+                        <div class="space-y-3">
+                            ${question.options.map((option, index) => `
+                                <label class="flex items-center p-3 bg-white rounded-lg border hover:bg-gray-50 cursor-pointer">
+                                    <input type="radio" name="answer" value="${index}" class="mr-3">
+                                    <span>${option}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button onclick="previousQuestion()" ${currentQuestion === 0 ? 'disabled' : ''} 
+                                class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                            Anterior
+                        </button>
+                        <button onclick="${currentQuestion === questions.length - 1 ? 'finishSimulation()' : 'nextQuestion()'}" 
+                                class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90">
+                            ${currentQuestion === questions.length - 1 ? 'Finalizar' : 'Próxima'}
+                        </button>
+                    </div>
+                `;
+            }
+
+            window.nextQuestion = function() {
+                const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+                if (selectedAnswer) {
+                    answers[currentQuestion] = parseInt(selectedAnswer.value);
+                    currentQuestion++;
+                    renderQuestion();
+                } else {
+                    alert('Por favor, selecione uma resposta');
+                }
+            };
+
+            window.previousQuestion = function() {
+                if (currentQuestion > 0) {
+                    currentQuestion--;
+                    renderQuestion();
+                }
+            };
+
+            window.finishSimulation = function() {
+                const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+                if (selectedAnswer) {
+                    answers[currentQuestion] = parseInt(selectedAnswer.value);
+                }
+                showSimulationResults(questions, answers);
+            };
+
+            // Timer
+            const timerInterval = setInterval(() => {
+                timeRemaining--;
+                const timerElement = document.getElementById('timer');
+                if (timerElement) {
+                    timerElement.textContent = `${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}`;
+                }
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Tempo esgotado!');
+                    showSimulationResults(questions, answers);
+                }
+            }, 1000);
+
+            renderQuestion();
+            modal.style.display = 'flex';
+        }
+
+        function showSimulationResults(questions, answers) {
+            let correct = 0;
+            const results = questions.map((question, index) => {
+                const isCorrect = answers[index] === question.correct;
+                if (isCorrect) correct++;
+                return { question, userAnswer: answers[index], isCorrect };
+            });
+
+            const percentage = Math.round((correct / questions.length) * 100);
+            
+            const content = document.getElementById('simulationContent');
+            content.innerHTML = `
+                <div class="text-center mb-8">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center ${percentage >= 70 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                        <i class="fas ${percentage >= 70 ? 'fa-check' : 'fa-times'} text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2">${percentage}%</h2>
+                    <p class="text-gray-600">Você acertou ${correct} de ${questions.length} questões</p>
+                    <div class="mt-4">
+                        <span class="px-4 py-2 rounded-full text-sm font-semibold ${percentage >= 70 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${percentage >= 70 ? 'Aprovado' : 'Precisa Melhorar'}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    ${results.map((result, index) => `
+                        <div class="question-card ${result.isCorrect ? 'correct' : 'incorrect'} p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Questão ${index + 1}</h4>
+                            <p class="text-sm text-gray-700 mb-2">${result.question.question}</p>
+                            <p class="text-sm">
+                                <strong>Sua resposta:</strong> ${result.question.options[result.userAnswer] || 'Não respondida'}
+                            </p>
+                            <p class="text-sm">
+                                <strong>Resposta correta:</strong> ${result.question.options[result.question.correct]}
+                            </p>
+                            ${result.question.explanation ? `<p class="text-sm text-gray-600 mt-2"><strong>Explicação:</strong> ${result.question.explanation}</p>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="flex justify-center mt-8">
+                    <button onclick="closeSimulation()" class="gradient-bg text-white px-8 py-3 rounded-lg hover:opacity-90">
+                        Fechar
+                    </button>
+                </div>
+            `;
+
+            // Save results to user profile
+            saveSimulationResult(correct, questions.length, percentage);
+        }
+
+        async function saveSimulationResult(correct, total, percentage) {
+            try {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                const userDoc = await userRef.get();
+                const userData = userDoc.data();
+
+                const newQuestionsAnswered = (userData.questionsAnswered || 0) + total;
+                const newAccuracyRate = Math.round(((userData.accuracyRate || 0) * (userData.questionsAnswered || 0) + percentage * total) / newQuestionsAnswered);
+
+                await userRef.update({
+                    questionsAnswered: newQuestionsAnswered,
+                    accuracyRate: newAccuracyRate,
+                    lastSimulation: new Date().toISOString()
+                });
+
+                // Update display
+                document.getElementById('questionsAnswered').textContent = newQuestionsAnswered;
+                document.getElementById('accuracyRate').textContent = newAccuracyRate + '%';
+            } catch (error) {
+                console.error('Error saving simulation result:', error);
+            }
+        }
+
+        function closeSimulation() {
+            document.getElementById('simulationModal').style.display = 'none';
+        }
+
+        // Chat Functions
+        async function sendMessage() {
+            if (!userGeminiKey) {
+                alert('Configure sua IA primeiro no Dashboard');
+                return;
+            }
+
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message to chat
+            addMessageToChat(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            addTypingIndicator();
+
+            try {
+                // Call Gemini API
+                const response = await callGeminiAPI(message);
+                removeTypingIndicator();
+                addMessageToChat(response, 'ai');
+            } catch (error) {
+                removeTypingIndicator();
+                addMessageToChat('Desculpe, ocorreu um erro. Verifique sua conexão com a IA.', 'ai');
+            }
+        }
+
+        async function callGeminiAPI(message) {
+            if (!userGeminiKey) {
+                throw new Error('IA não configurada');
+            }
+
+            // Construct context-aware prompt
+            const contextPrompt = `Você é um professor virtual especializado em ${currentArea || 'educação'} para ${currentContest || 'concursos'}. 
+            Responda de forma didática, clara e motivadora. Se a pergunta for sobre uma matéria específica, forneça explicações detalhadas com exemplos.
+            
+            Pergunta do aluno: ${message}`;
+
+            const requestBody = {
+                contents: [{
+                    parts: [{
+                        text: contextPrompt
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 1024,
+                }
+            };
+
+            const response = await fetch(`${GEMINI_API_URL}?key=${userGeminiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                throw new Error('API request failed');
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        function addMessageToChat(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message mb-4';
+
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="flex items-start justify-end">
+                        <div class="bg-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
+                            <p class="text-sm">${message}</p>
+                        </div>
+                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center ml-3">
+                            <i class="fas fa-user text-gray-600 text-sm"></i>
+                        </div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 shadow-sm max-w-xs">
+                            <p class="text-sm text-gray-800">${message}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'chat-message mb-4';
+            typingDiv.innerHTML = `
+                <div class="flex items-start">
+                    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                        <p class="text-sm text-gray-800 typing-animation">Digitando...</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // AI Exercise Generation
+        async function generateAIExercises() {
+            if (!userGeminiKey) {
+                alert('Configure sua IA primeiro no Dashboard');
+                return;
+            }
+
+            if (!currentArea) {
+                alert('Configure seu concurso primeiro');
+                return;
+            }
+
+            try {
+                const prompt = `Crie 5 questões de múltipla escolha sobre ${currentArea} para ${currentContest}. 
+                Formato: Para cada questão, forneça:
+                1. A pergunta
+                2. 5 alternativas (a, b, c, d, e)
+                3. A resposta correta
+                4. Uma explicação breve
+                
+                Torne as questões desafiadoras mas justas para o nível do concurso.`;
+
+                const response = await callGeminiAPI(prompt);
+                
+                // Display generated exercises
+                const modal = document.getElementById('simulationModal');
+                const title = document.getElementById('simulationTitle');
+                const content = document.getElementById('simulationContent');
+
+                title.textContent = `Exercícios Gerados por IA - ${currentArea}`;
+                content.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-robot text-green-600 text-xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-green-800">Exercícios Personalizados</h3>
+                                <p class="text-sm text-green-600">Gerados especialmente para você pela IA</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 border">
+                        <pre class="whitespace-pre-wrap text-sm text-gray-800">${response}</pre>
+                    </div>
+                    <div class="flex justify-center mt-6">
+                        <button onclick="closeSimulation()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 mr-3">
+                            Fechar
+                        </button>
+                        <button onclick="generateAIExercises()" class="border border-purple-600 text-purple-600 px-6 py-2 rounded-lg hover:bg-purple-50">
+                            Gerar Novos
+                        </button>
+                    </div>
+                `;
+
+                modal.style.display = 'flex';
+            } catch (error) {
+                alert('Erro ao gerar exercícios. Verifique sua conexão e tente novamente.');
+            }
+        }
+
+        function studyTopic(topic) {
+            alert(`Iniciando estudo do tópico: ${topic}\n\nEm breve você terá acesso a conteúdo personalizado sobre este tópico!`);
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cb1ed5d76ef233',t:'MTc1NDc4MzA1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cc2317b71caf3b',t:'MTc1NDc5MzcxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
