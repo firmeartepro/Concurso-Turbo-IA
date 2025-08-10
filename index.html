@@ -314,6 +314,9 @@
                     <button onclick="showStudentSection('progress')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
                         <i class="fas fa-chart-line mr-2"></i>Progresso
                     </button>
+                    <button onclick="showStudentSection('ai-config')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-robot mr-2"></i>Config IA
+                    </button>
                 </div>
             </div>
         </nav>
@@ -497,42 +500,28 @@
                             </div>
                         </div>
 
-                        <!-- Subject Priorities -->
+                        <!-- Study Content -->
                         <div class="border-t pt-6">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Matérias Prioritárias</h3>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="portugues" class="subject-checkbox mr-2">
-                                    <span class="text-sm">Português</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="matematica" class="subject-checkbox mr-2">
-                                    <span class="text-sm">Matemática</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="historia" class="subject-checkbox mr-2">
-                                    <span class="text-sm">História</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="geografia" class="subject-checkbox mr-2">
-                                    <span class="text-sm">Geografia</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="fisica" class="subject-checkbox mr-2">
-                                    <span class="text-sm">Física</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="quimica" class="subject-checkbox mr-2">
-                                    <span class="text-sm">Química</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="biologia" class="subject-checkbox mr-2">
-                                    <span class="text-sm">Biologia</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="direito" class="subject-checkbox mr-2">
-                                    <span class="text-sm">Direito</span>
-                                </label>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Conteúdo Programático</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-list-ul mr-2"></i>Cole aqui o conteúdo programático completo do seu concurso
+                                    </label>
+                                    <textarea id="studyContent" rows="8" 
+                                              placeholder="Exemplo:&#10;&#10;PORTUGUÊS:&#10;- Interpretação de textos&#10;- Gramática normativa&#10;- Redação oficial&#10;&#10;MATEMÁTICA:&#10;- Álgebra linear&#10;- Estatística básica&#10;- Matemática financeira&#10;&#10;DIREITO ADMINISTRATIVO:&#10;- Princípios da administração pública&#10;- Atos administrativos&#10;- Licitações e contratos..."
+                                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-vertical min-h-32"></textarea>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        <i class="fas fa-lightbulb mr-1 text-yellow-500"></i>
+                                        <strong>Dica:</strong> Quanto mais detalhado o conteúdo, melhor será o plano de estudos gerado pela IA!
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações Adicionais (Opcional)</label>
+                                    <textarea id="studyNotes" rows="3" 
+                                              placeholder="Ex: Tenho mais dificuldade em matemática, preciso focar mais em redação, já estudei direito constitucional..."
+                                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                                </div>
                             </div>
                         </div>
 
@@ -661,6 +650,138 @@
                     </div>
                 </div>
             </div>
+
+            <!-- AI Config Section -->
+            <div id="studentAi-configSection" class="student-section" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Configuração da sua IA Pessoal</h2>
+                    
+                    <!-- Tutorial Section -->
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-8 border border-blue-200">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-graduation-cap text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-3">🎯 Como configurar sua IA para ser um VENCEDOR!</h3>
+                                <div class="space-y-3 text-sm text-gray-700">
+                                    <div class="flex items-start">
+                                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">1</span>
+                                        <div>
+                                            <p class="font-semibold">Acesse o Google AI Studio (GRÁTIS!)</p>
+                                            <p>Vá em: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline font-medium">https://aistudio.google.com/app/apikey</a></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">2</span>
+                                        <div>
+                                            <p class="font-semibold">Faça login com sua conta Google</p>
+                                            <p>É gratuito e você tem acesso completo ao Gemini!</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">3</span>
+                                        <div>
+                                            <p class="font-semibold">Clique em "Create API Key"</p>
+                                            <p>Copie a chave gerada e cole no campo abaixo</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">✓</span>
+                                        <div>
+                                            <p class="font-semibold text-green-700">Pronto! Sua IA pessoal está configurada!</p>
+                                            <p>Agora você terá acesso a conteúdos, simulados e planos de estudo personalizados!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="gemini-gradient rounded-lg p-6 mb-6 text-white">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-robot text-3xl mr-4"></i>
+                            <div>
+                                <h3 class="text-xl font-bold">Sua IA Educacional Pessoal</h3>
+                                <p class="opacity-90">Configure o Gemini AI para turbinar seus estudos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="studentGeminiConfigForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-key mr-2"></i>Sua Chave da API Gemini (Gratuita)
+                            </label>
+                            <input type="password" id="studentGeminiApiKey" 
+                                   placeholder="Cole sua chave da API do Google Gemini aqui..."
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <div class="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                <p class="text-sm text-green-800">
+                                    <i class="fas fa-gift mr-1"></i>
+                                    <strong>100% GRATUITO!</strong> O Google oferece acesso gratuito ao Gemini AI. 
+                                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-green-600 hover:underline font-medium">Clique aqui para obter sua chave</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-cog mr-2"></i>Modelo da IA
+                                </label>
+                                <select id="studentGeminiModel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="gemini-pro">Gemini Pro (Recomendado)</option>
+                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash (Mais Rápido)</option>
+                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (Mais Avançado)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-thermometer-half mr-2"></i>Criatividade da IA
+                                </label>
+                                <select id="studentGeminiTemperature" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="0.3">Conservador (Mais Preciso)</option>
+                                    <option value="0.7" selected>Equilibrado (Recomendado)</option>
+                                    <option value="0.9">Criativo (Mais Variado)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <button type="submit" class="gradient-bg text-white px-6 py-3 rounded-lg hover:opacity-90 transition duration-300">
+                                <i class="fas fa-save mr-2"></i>Salvar Configuração
+                            </button>
+                            <button type="button" onclick="testStudentGeminiConnection()" class="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition duration-300">
+                                <i class="fas fa-plug mr-2"></i>Testar IA
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="studentGeminiStatus" class="mt-6 p-4 rounded-lg hidden">
+                        <!-- Status will be shown here -->
+                    </div>
+
+                    <!-- AI Capabilities -->
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 text-center">
+                            <i class="fas fa-brain text-3xl text-blue-600 mb-3"></i>
+                            <h4 class="font-bold text-gray-800 mb-2">Planos Personalizados</h4>
+                            <p class="text-sm text-gray-600">IA cria cronogramas baseados no seu conteúdo programático</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 text-center">
+                            <i class="fas fa-clipboard-list text-3xl text-green-600 mb-3"></i>
+                            <h4 class="font-bold text-gray-800 mb-2">Simulados Inteligentes</h4>
+                            <p class="text-sm text-gray-600">Questões geradas especificamente para seu concurso</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 text-center">
+                            <i class="fas fa-comments text-3xl text-purple-600 mb-3"></i>
+                            <h4 class="font-bold text-gray-800 mb-2">Professor Virtual</h4>
+                            <p class="text-sm text-gray-600">Tire dúvidas e receba explicações detalhadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -722,14 +843,14 @@
 
     <script>
         // Firebase Configuration - SUBSTITUA PELAS SUAS CHAVES
-       const firebaseConfig = {
-  apiKey: "AIzaSyCpR8xBkgo4zA9m0-MSl2pI09KsVEKsR9Y",
-  authDomain: "concurso-turbo-ia.firebaseapp.com",
-  projectId: "concurso-turbo-ia",
-  storageBucket: "concurso-turbo-ia.firebasestorage.app",
-  messagingSenderId: "559351714048",
-  appId: "1:559351714048:web:18894243f16acae36763e5"
-};
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY_AQUI",
+            authDomain: "SEU_PROJECT_ID.firebaseapp.com",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_PROJECT_ID.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -982,6 +1103,7 @@
         // Gemini Configuration
         async function loadGeminiConfig() {
             try {
+                // Load admin config first
                 const configDoc = await db.collection('config').doc('gemini').get();
                 if (configDoc.exists) {
                     const config = configDoc.data();
@@ -990,10 +1112,31 @@
                     
                     if (geminiApiKey) {
                         updateAIStatus(true);
-                        document.getElementById('geminiApiKey').value = '••••••••••••••••';
-                        document.getElementById('geminiModel').value = geminiConfig.model;
-                        document.getElementById('geminiTemperature').value = geminiConfig.temperature;
-                        document.getElementById('temperatureValue').textContent = geminiConfig.temperature;
+                        if (document.getElementById('geminiApiKey')) {
+                            document.getElementById('geminiApiKey').value = '••••••••••••••••';
+                            document.getElementById('geminiModel').value = geminiConfig.model;
+                            document.getElementById('geminiTemperature').value = geminiConfig.temperature;
+                            document.getElementById('temperatureValue').textContent = geminiConfig.temperature;
+                        }
+                    }
+                }
+
+                // Load student config if exists
+                if (currentUser) {
+                    const studentConfigDoc = await db.collection('users').doc(currentUser.uid).collection('config').doc('gemini').get();
+                    if (studentConfigDoc.exists) {
+                        const studentConfig = studentConfigDoc.data();
+                        geminiApiKey = studentConfig.apiKey;
+                        geminiConfig = { ...geminiConfig, ...studentConfig };
+                        
+                        if (geminiApiKey) {
+                            updateAIStatus(true);
+                            if (document.getElementById('studentGeminiApiKey')) {
+                                document.getElementById('studentGeminiApiKey').value = '••••••••••••••••';
+                                document.getElementById('studentGeminiModel').value = geminiConfig.model;
+                                document.getElementById('studentGeminiTemperature').value = geminiConfig.temperature;
+                            }
+                        }
                     }
                 }
             } catch (error) {
@@ -1045,6 +1188,69 @@
                 showGeminiStatus('Erro na conexão: ' + error.message, 'error');
                 updateAIStatus(false);
             }
+        }
+
+        // Student Gemini Configuration
+        document.addEventListener('DOMContentLoaded', function() {
+            const studentGeminiForm = document.getElementById('studentGeminiConfigForm');
+            if (studentGeminiForm) {
+                studentGeminiForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const apiKey = document.getElementById('studentGeminiApiKey').value;
+                    const model = document.getElementById('studentGeminiModel').value;
+                    const temperature = parseFloat(document.getElementById('studentGeminiTemperature').value);
+
+                    if (apiKey && apiKey !== '••••••••••••••••') {
+                        geminiApiKey = apiKey;
+                    }
+                    
+                    geminiConfig = { model, temperature };
+
+                    try {
+                        await db.collection('users').doc(currentUser.uid).collection('config').doc('gemini').set({
+                            apiKey: geminiApiKey,
+                            model: model,
+                            temperature: temperature,
+                            updatedAt: new Date()
+                        });
+
+                        showStudentGeminiStatus('Configuração salva com sucesso!', 'success');
+                        updateAIStatus(true);
+                    } catch (error) {
+                        showStudentGeminiStatus('Erro ao salvar configuração: ' + error.message, 'error');
+                    }
+                });
+            }
+        });
+
+        async function testStudentGeminiConnection() {
+            if (!geminiApiKey) {
+                showStudentGeminiStatus('Configure a chave da API primeiro', 'error');
+                return;
+            }
+
+            showStudentGeminiStatus('Testando sua IA pessoal...', 'info');
+
+            try {
+                const response = await callGeminiAPI('Olá! Você está pronto para me ajudar a estudar?');
+                showStudentGeminiStatus('🎉 Sua IA está funcionando perfeitamente! Resposta: ' + response.substring(0, 100) + '...', 'success');
+                updateAIStatus(true);
+            } catch (error) {
+                showStudentGeminiStatus('Erro na conexão: ' + error.message, 'error');
+                updateAIStatus(false);
+            }
+        }
+
+        function showStudentGeminiStatus(message, type) {
+            const statusDiv = document.getElementById('studentGeminiStatus');
+            statusDiv.className = `mt-6 p-4 rounded-lg ${
+                type === 'success' ? 'bg-green-100 border border-green-400 text-green-700' :
+                type === 'error' ? 'bg-red-100 border border-red-400 text-red-700' :
+                'bg-blue-100 border border-blue-400 text-blue-700'
+            }`;
+            statusDiv.textContent = message;
+            statusDiv.classList.remove('hidden');
         }
 
         function showGeminiStatus(message, type) {
@@ -1161,7 +1367,8 @@
                 dailyHours: parseInt(document.getElementById('dailyHours').value),
                 studyTime: document.getElementById('studyTime').value,
                 currentLevel: document.getElementById('currentLevel').value,
-                subjects: Array.from(document.querySelectorAll('.subject-checkbox:checked')).map(cb => cb.value)
+                studyContent: document.getElementById('studyContent').value,
+                studyNotes: document.getElementById('studyNotes').value
             };
 
             try {
@@ -1198,31 +1405,41 @@
             document.getElementById('dailyHours').value = userProfile.dailyHours || '4';
             document.getElementById('studyTime').value = userProfile.studyTime || 'manha';
             document.getElementById('currentLevel').value = userProfile.currentLevel || 'intermediario';
-
-            // Load selected subjects
-            if (userProfile.subjects) {
-                userProfile.subjects.forEach(subject => {
-                    const checkbox = document.querySelector(`.subject-checkbox[value="${subject}"]`);
-                    if (checkbox) checkbox.checked = true;
-                });
-            }
+            document.getElementById('studyContent').value = userProfile.studyContent || '';
+            document.getElementById('studyNotes').value = userProfile.studyNotes || '';
         }
 
         function resetProfile() {
             document.getElementById('profileForm').reset();
-            document.querySelectorAll('.subject-checkbox').forEach(cb => cb.checked = false);
         }
 
         function generateStudyPlan() {
-            if (!userProfile.subjects || userProfile.subjects.length === 0) return;
+            if (!userProfile.studyContent) return;
 
             const studyPlanContent = document.getElementById('studyPlanContent');
             const dailyHours = userProfile.dailyHours || 4;
-            const hoursPerSubject = Math.floor(dailyHours / userProfile.subjects.length);
 
-            studyPlanContent.innerHTML = userProfile.subjects.map(subject => `
+            // Extract subjects from study content
+            const subjects = extractSubjectsFromContent(userProfile.studyContent);
+            const hoursPerSubject = subjects.length > 0 ? Math.floor(dailyHours / subjects.length) : dailyHours;
+
+            if (subjects.length === 0) {
+                studyPlanContent.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <i class="fas fa-robot text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-600 mb-2">Plano Inteligente Pronto!</h3>
+                        <p class="text-gray-500 mb-4">Baseado no seu conteúdo programático</p>
+                        <button onclick="generateAIStudyPlan()" class="gemini-gradient text-white px-6 py-3 rounded-lg hover:opacity-90">
+                            <i class="fas fa-brain mr-2"></i>Gerar Plano com IA
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            studyPlanContent.innerHTML = subjects.map(subject => `
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white card-hover">
-                    <h3 class="text-lg font-semibold mb-2">${subject.charAt(0).toUpperCase() + subject.slice(1)}</h3>
+                    <h3 class="text-lg font-semibold mb-2">${subject}</h3>
                     <p class="text-sm opacity-90 mb-2">${hoursPerSubject}h por dia</p>
                     <p class="text-sm opacity-90 mb-4">Nível: ${userProfile.currentLevel}</p>
                     <button onclick="studySubject('${subject}')" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
@@ -1232,26 +1449,61 @@
             `).join('');
         }
 
+        function extractSubjectsFromContent(content) {
+            if (!content) return [];
+            
+            const lines = content.split('\n');
+            const subjects = [];
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (line && !line.startsWith('-') && !line.startsWith('•') && line.includes(':')) {
+                    const subject = line.split(':')[0].trim();
+                    if (subject && !subjects.includes(subject)) {
+                        subjects.push(subject);
+                    }
+                }
+            });
+            
+            return subjects.slice(0, 6); // Limit to 6 subjects for display
+        }
+
         function loadMaterials() {
-            if (!userProfile.subjects) return;
+            if (!userProfile.studyContent) return;
 
             const materialsContent = document.getElementById('materialsContent');
-            materialsContent.innerHTML = userProfile.subjects.map(subject => `
+            const subjects = extractSubjectsFromContent(userProfile.studyContent);
+
+            if (subjects.length === 0) {
+                materialsContent.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <i class="fas fa-robot text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-600 mb-2">Materiais Inteligentes</h3>
+                        <p class="text-gray-500 mb-4">Baseados no seu conteúdo programático</p>
+                        <button onclick="generateAIMaterials()" class="gemini-gradient text-white px-6 py-3 rounded-lg hover:opacity-90">
+                            <i class="fas fa-brain mr-2"></i>Gerar Materiais com IA
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            materialsContent.innerHTML = subjects.map(subject => `
                 <div class="study-material rounded-lg p-6 card-hover">
                     <div class="text-center mb-4">
                         <i class="fas fa-book text-4xl text-blue-600 mb-2"></i>
-                        <h3 class="text-lg font-semibold">${subject.charAt(0).toUpperCase() + subject.slice(1)}</h3>
+                        <h3 class="text-lg font-semibold">${subject}</h3>
                         <p class="text-gray-600 text-sm">Material personalizado</p>
                     </div>
                     <div class="space-y-2">
                         <button onclick="generateSubjectMaterial('${subject}')" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 py-2 px-4 rounded text-sm">
-                            📚 Resumos
+                            📚 Resumos com IA
                         </button>
                         <button onclick="generateSubjectExercises('${subject}')" class="w-full bg-green-100 hover:bg-green-200 text-green-800 py-2 px-4 rounded text-sm">
-                            📝 Exercícios
+                            📝 Exercícios com IA
                         </button>
-                        <button onclick="generateSubjectVideos('${subject}')" class="w-full bg-red-100 hover:bg-red-200 text-red-800 py-2 px-4 rounded text-sm">
-                            🎥 Videoaulas
+                        <button onclick="generateSubjectQuestions('${subject}')" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-800 py-2 px-4 rounded text-sm">
+                            ❓ Questões com IA
                         </button>
                     </div>
                 </div>
@@ -1308,31 +1560,42 @@
         }
 
         function loadProgressData() {
-            if (!userProfile.subjects) return;
+            if (!userProfile.studyContent) return;
 
+            const subjects = extractSubjectsFromContent(userProfile.studyContent);
+            
             // Subject Progress
             const subjectProgress = document.getElementById('subjectProgress');
-            subjectProgress.innerHTML = userProfile.subjects.map(subject => {
-                const progress = Math.floor(Math.random() * 100); // Simulated progress
-                return `
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-book text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold">${subject.charAt(0).toUpperCase() + subject.slice(1)}</h4>
-                                <p class="text-sm text-gray-600">${progress}% concluído</p>
-                            </div>
-                        </div>
-                        <div class="w-24">
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
-                            </div>
-                        </div>
+            if (subjects.length === 0) {
+                subjectProgress.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-chart-bar text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600">Configure seu conteúdo programático para ver o progresso</p>
                     </div>
                 `;
-            }).join('');
+            } else {
+                subjectProgress.innerHTML = subjects.map(subject => {
+                    const progress = Math.floor(Math.random() * 100); // Simulated progress
+                    return `
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-book text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">${subject}</h4>
+                                    <p class="text-sm text-gray-600">${progress}% concluído</p>
+                                </div>
+                            </div>
+                            <div class="w-24">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
 
             // Study Calendar
             generateStudyCalendar();
@@ -1423,16 +1686,29 @@
 
             try {
                 const context = `Você é um professor virtual especializado em ${userProfile.contestType || 'concursos'} para ${userProfile.targetPosition || 'estudantes'}. 
-                O aluno está estudando: ${userProfile.subjects ? userProfile.subjects.join(', ') : 'matérias gerais'}.
+                
+                CONTEÚDO PROGRAMÁTICO DO ALUNO:
+                ${userProfile.studyContent || 'Conteúdo não especificado'}
+                
+                OBSERVAÇÕES ADICIONAIS:
+                ${userProfile.studyNotes || 'Nenhuma observação adicional'}
+                
                 Nível do aluno: ${userProfile.currentLevel || 'intermediário'}.
-                Responda de forma didática, clara e motivadora.`;
+                Horas de estudo por dia: ${userProfile.dailyHours || 4}h
+                
+                INSTRUÇÕES:
+                - Responda de forma didática, clara e motivadora
+                - Foque no conteúdo programático específico do aluno
+                - Seja um verdadeiro mentor para ajudar o aluno a PASSAR no concurso
+                - Dê dicas práticas e estratégias de estudo
+                - Seja encorajador e positivo`;
 
                 const response = await callGeminiAPI(message, context);
                 removeTypingIndicator();
                 addMessageToChat(response, 'ai');
             } catch (error) {
                 removeTypingIndicator();
-                addMessageToChat('Desculpe, ocorreu um erro. Verifique se a API está configurada corretamente.', 'ai');
+                addMessageToChat('Desculpe, ocorreu um erro. Verifique se a API está configurada corretamente na seção "Config IA".', 'ai');
             }
         }
 
@@ -1498,54 +1774,102 @@
         // AI Content Generation
         async function generateAIMaterials() {
             if (!geminiApiKey) {
-                alert('Configure a API do Gemini no painel administrativo primeiro');
+                alert('Configure sua IA pessoal na seção "Config IA" primeiro');
                 return;
             }
 
-            if (!userProfile.subjects) {
-                alert('Configure seu perfil primeiro');
+            if (!userProfile.studyContent) {
+                alert('Configure seu conteúdo programático no perfil primeiro');
                 return;
             }
 
             try {
-                const prompt = `Crie um plano de estudos detalhado para ${userProfile.contestType} nas matérias: ${userProfile.subjects.join(', ')}. 
-                Nível: ${userProfile.currentLevel}. 
-                Tempo disponível: ${userProfile.dailyHours}h por dia.
-                Inclua tópicos importantes, cronograma e dicas de estudo.`;
+                const prompt = `Crie um plano de estudos COMPLETO e DETALHADO para ${userProfile.contestType || 'concurso'} - ${userProfile.targetPosition || 'cargo'}.
+
+                CONTEÚDO PROGRAMÁTICO:
+                ${userProfile.studyContent}
+
+                OBSERVAÇÕES DO ALUNO:
+                ${userProfile.studyNotes || 'Nenhuma observação adicional'}
+
+                PERFIL DO ESTUDANTE:
+                - Nível: ${userProfile.currentLevel}
+                - Tempo disponível: ${userProfile.dailyHours}h por dia
+                - Melhor horário: ${userProfile.studyTime}
+                - Data da prova: ${userProfile.examDate || 'Não informada'}
+
+                CRIE UM PLANO QUE INCLUA:
+                1. Cronograma semanal detalhado
+                2. Distribuição de tempo por matéria
+                3. Estratégias específicas para cada tópico
+                4. Dicas de memorização e revisão
+                5. Simulados e exercícios recomendados
+                6. Técnicas de motivação e foco
+                
+                Seja específico, prático e motivador. Este aluno PRECISA PASSAR!`;
 
                 const response = await callGeminiAPI(prompt);
-                
-                // Show generated content in modal
-                showGeneratedContent('Materiais Gerados pela IA', response);
+                showGeneratedContent('📚 Plano de Estudos Personalizado', response);
             } catch (error) {
                 alert('Erro ao gerar materiais: ' + error.message);
             }
         }
 
+        async function generateAIStudyPlan() {
+            await generateAIMaterials();
+        }
+
         async function generateAISimulation() {
             if (!geminiApiKey) {
-                alert('Configure a API do Gemini no painel administrativo primeiro');
+                alert('Configure sua IA pessoal na seção "Config IA" primeiro');
                 return;
             }
 
-            if (!userProfile.subjects) {
-                alert('Configure seu perfil primeiro');
+            if (!userProfile.studyContent) {
+                alert('Configure seu conteúdo programático no perfil primeiro');
                 return;
             }
 
             try {
-                const prompt = `Crie 10 questões de múltipla escolha para ${userProfile.contestType} sobre ${userProfile.subjects.join(', ')}.
-                Nível: ${userProfile.currentLevel}.
-                Formato: Para cada questão, inclua:
-                1. Enunciado da questão
-                2. 5 alternativas (a, b, c, d, e)
-                3. Resposta correta
-                4. Explicação detalhada
+                const prompt = `Crie um SIMULADO COMPLETO de 15 questões para ${userProfile.contestType || 'concurso'} - ${userProfile.targetPosition || 'cargo'}.
+
+                BASEIE-SE NESTE CONTEÚDO PROGRAMÁTICO:
+                ${userProfile.studyContent}
+
+                OBSERVAÇÕES DO ALUNO:
+                ${userProfile.studyNotes || 'Nenhuma observação adicional'}
+
+                NÍVEL: ${userProfile.currentLevel}
+
+                FORMATO PARA CADA QUESTÃO:
                 
-                Torne as questões desafiadoras mas adequadas ao nível do estudante.`;
+                QUESTÃO X:
+                [Enunciado claro e objetivo]
+                
+                a) [Alternativa A]
+                b) [Alternativa B] 
+                c) [Alternativa C]
+                d) [Alternativa D]
+                e) [Alternativa E]
+                
+                RESPOSTA: [Letra correta]
+                
+                EXPLICAÇÃO DETALHADA:
+                [Explicação completa do porquê a resposta está correta e as outras estão erradas]
+                
+                ---
+                
+                INSTRUÇÕES:
+                - Questões no estilo da banca ${userProfile.institution || 'do concurso'}
+                - Nível adequado ao perfil do aluno
+                - Cubra diferentes tópicos do conteúdo programático
+                - Seja rigoroso na correção
+                - Inclua pegadinhas típicas de concurso
+                
+                Este simulado deve preparar o aluno para PASSAR no concurso!`;
 
                 const response = await callGeminiAPI(prompt);
-                showGeneratedContent('Simulado Gerado pela IA', response);
+                showGeneratedContent('🎯 Simulado Personalizado', response);
             } catch (error) {
                 alert('Erro ao gerar simulado: ' + error.message);
             }
@@ -1600,19 +1924,126 @@
 
         // Utility Functions
         function studySubject(subject) {
-            alert(`Iniciando estudo de ${subject}!\n\nEm breve você terá acesso a conteúdo personalizado gerado pela IA.`);
+            if (!geminiApiKey) {
+                alert('Configure sua IA pessoal na seção "Config IA" primeiro');
+                return;
+            }
+            generateSubjectMaterial(subject);
         }
 
-        function generateSubjectMaterial(subject) {
-            alert(`Gerando resumos de ${subject} com IA...\n\nFuncionalidade em desenvolvimento.`);
+        async function generateSubjectMaterial(subject) {
+            if (!geminiApiKey) {
+                alert('Configure sua IA pessoal na seção "Config IA" primeiro');
+                return;
+            }
+
+            try {
+                const prompt = `Crie um RESUMO COMPLETO e DETALHADO sobre ${subject} para ${userProfile.contestType || 'concurso'}.
+
+                BASEIE-SE NESTE CONTEÚDO PROGRAMÁTICO:
+                ${userProfile.studyContent}
+
+                FOQUE ESPECIFICAMENTE EM: ${subject}
+
+                NÍVEL DO ALUNO: ${userProfile.currentLevel}
+
+                CRIE UM RESUMO QUE INCLUA:
+                1. Conceitos fundamentais
+                2. Pontos mais cobrados em provas
+                3. Dicas de memorização
+                4. Exemplos práticos
+                5. Pegadinhas comuns
+                6. Fórmulas ou regras importantes
+                7. Conexões com outros tópicos
+                
+                Seja didático, completo e focado na APROVAÇÃO!`;
+
+                const response = await callGeminiAPI(prompt);
+                showGeneratedContent(`📚 Resumo: ${subject}`, response);
+            } catch (error) {
+                alert('Erro ao gerar resumo: ' + error.message);
+            }
         }
 
-        function generateSubjectExercises(subject) {
-            alert(`Criando exercícios de ${subject} com IA...\n\nFuncionalidade em desenvolvimento.`);
+        async function generateSubjectExercises(subject) {
+            if (!geminiApiKey) {
+                alert('Configure sua IA pessoal na seção "Config IA" primeiro');
+                return;
+            }
+
+            try {
+                const prompt = `Crie 8 EXERCÍCIOS PRÁTICOS sobre ${subject} para ${userProfile.contestType || 'concurso'}.
+
+                BASEIE-SE NESTE CONTEÚDO PROGRAMÁTICO:
+                ${userProfile.studyContent}
+
+                FOQUE EM: ${subject}
+                NÍVEL: ${userProfile.currentLevel}
+
+                FORMATO PARA CADA EXERCÍCIO:
+                
+                EXERCÍCIO X:
+                [Enunciado do exercício]
+                
+                a) [Alternativa A]
+                b) [Alternativa B]
+                c) [Alternativa C]
+                d) [Alternativa D]
+                e) [Alternativa E]
+                
+                RESPOSTA: [Letra correta]
+                RESOLUÇÃO: [Passo a passo detalhado]
+                
+                ---
+                
+                Varie o nível de dificuldade e cubra diferentes aspectos do tópico!`;
+
+                const response = await callGeminiAPI(prompt);
+                showGeneratedContent(`📝 Exercícios: ${subject}`, response);
+            } catch (error) {
+                alert('Erro ao gerar exercícios: ' + error.message);
+            }
         }
 
-        function generateSubjectVideos(subject) {
-            alert(`Buscando videoaulas de ${subject}...\n\nFuncionalidade em desenvolvimento.`);
+        async function generateSubjectQuestions(subject) {
+            if (!geminiApiKey) {
+                alert('Configure sua IA pessoal na seção "Config IA" primeiro');
+                return;
+            }
+
+            try {
+                const prompt = `Crie 10 QUESTÕES DE CONCURSO sobre ${subject} para ${userProfile.contestType || 'concurso'}.
+
+                BASEIE-SE NESTE CONTEÚDO PROGRAMÁTICO:
+                ${userProfile.studyContent}
+
+                MATÉRIA: ${subject}
+                NÍVEL: ${userProfile.currentLevel}
+                BANCA: ${userProfile.institution || 'Estilo de concurso público'}
+
+                FORMATO:
+                
+                QUESTÃO X:
+                [Enunciado no estilo da banca]
+                
+                a) [Alternativa A]
+                b) [Alternativa B]
+                c) [Alternativa C]
+                d) [Alternativa D]
+                e) [Alternativa E]
+                
+                GABARITO: [Letra]
+                COMENTÁRIO: [Explicação detalhada]
+                
+                ---
+                
+                Inclua questões com pegadinhas típicas e diferentes níveis de dificuldade!`;
+
+                const response = await callGeminiAPI(prompt);
+                showGeneratedContent(`❓ Questões: ${subject}`, response);
+            } catch (error) {
+                alert('Erro ao gerar questões: ' + error.message);
+            }
         }
 
         function startSimulation(type) {
@@ -1623,8 +2054,9 @@
             document.getElementById('simulationModal').style.display = 'none';
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cd3307a7b85f30',t:'MTc1NDgwNDg1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cd68e57783b54f',t:'MTc1NDgwNzA2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
