@@ -10,11 +10,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .typing-animation { border-right: 2px solid #0078d4; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 50% { border-color: transparent; } 51%, 100% { border-color: #0078d4; } }
+        .typing-animation { border-right: 2px solid #667eea; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 50% { border-color: transparent; } 51%, 100% { border-color: #667eea; } }
         .progress-bar { transition: width 0.5s ease-in-out; }
         .chat-message { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -22,7 +22,6 @@
         .question-card.correct { border-left-color: #10b981; background-color: #f0fdf4; }
         .question-card.incorrect { border-left-color: #ef4444; background-color: #fef2f2; }
         .study-material { background: linear-gradient(145deg, #f8fafc, #e2e8f0); }
-        .microsoft-gradient { background: linear-gradient(135deg, #0078d4 0%, #00bcf2 50%, #40e0d0 100%); }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -50,12 +49,12 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input type="email" id="loginEmail" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
                     <input type="password" id="loginPassword" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 </div>
                 <button type="submit" 
                         class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition duration-300">
@@ -115,7 +114,7 @@
                 </div>
                 <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <div class="p-3 rounded-full bg-purple-100 text-purple-600">
                             <i class="fas fa-book text-xl"></i>
                         </div>
                         <div class="ml-4">
@@ -188,7 +187,7 @@
         <nav class="bg-white shadow-sm border-b">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex space-x-8">
-                    <button onclick="showStudentSection('dashboard')" class="student-nav-btn py-4 px-2 border-b-2 border-blue-500 text-blue-600 font-medium">
+                    <button onclick="showStudentSection('dashboard')" class="student-nav-btn py-4 px-2 border-b-2 border-purple-500 text-purple-600 font-medium">
                         <i class="fas fa-home mr-2"></i>Dashboard
                     </button>
                     <button onclick="showStudentSection('materials')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
@@ -198,7 +197,7 @@
                         <i class="fas fa-clipboard-list mr-2"></i>Simulados
                     </button>
                     <button onclick="showStudentSection('chat')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
-                        <i class="fab fa-microsoft mr-2"></i>Chat IA
+                        <i class="fas fa-robot mr-2"></i>Chat IA
                     </button>
                     <button onclick="showStudentSection('progress')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
                         <i class="fas fa-chart-line mr-2"></i>Progresso
@@ -212,17 +211,17 @@
             <!-- Dashboard Section -->
             <div id="studentDashboardSection" class="student-section">
                 <!-- AI Configuration -->
-                <div id="aiConfigSection" class="microsoft-gradient rounded-xl shadow-lg p-6 mb-8 text-white">
+                <div id="aiConfigSection" class="bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl shadow-lg p-6 mb-8 text-white">
                     <div class="flex items-center mb-4">
-                        <i class="fab fa-microsoft text-4xl mr-4"></i>
+                        <i class="fas fa-robot text-3xl mr-4"></i>
                         <div>
-                            <h2 class="text-2xl font-bold">Configure seu Copilot Pessoal</h2>
-                            <p class="opacity-90">Conecte sua própria IA Microsoft Copilot gratuita em 4 passos simples</p>
+                            <h2 class="text-2xl font-bold">Configure sua IA Pessoal</h2>
+                            <p class="opacity-90">Conecte sua própria IA Gemini gratuita em 3 passos simples</p>
                         </div>
                     </div>
                     
                     <div id="aiSetupSteps" class="bg-white bg-opacity-10 rounded-lg p-6 mb-6">
-                        <h3 class="text-lg font-semibold mb-4">🚀 Passo a Passo - Super Fácil!</h3>
+                        <h3 class="text-lg font-semibold mb-4">📋 Passo a Passo - Super Fácil!</h3>
                         
                         <div class="space-y-4">
                             <div class="flex items-start">
@@ -230,8 +229,8 @@
                                     <span class="font-bold">1</span>
                                 </div>
                                 <div>
-                                    <p class="font-semibold">Acesse o Azure Portal</p>
-                                    <p class="text-sm opacity-90">Clique no link: <a href="https://portal.azure.com" target="_blank" class="underline hover:text-yellow-300">https://portal.azure.com</a></p>
+                                    <p class="font-semibold">Acesse o Google AI Studio</p>
+                                    <p class="text-sm opacity-90">Clique no link: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline hover:text-yellow-300">https://aistudio.google.com/app/apikey</a></p>
                                 </div>
                             </div>
                             
@@ -240,8 +239,8 @@
                                     <span class="font-bold">2</span>
                                 </div>
                                 <div>
-                                    <p class="font-semibold">Crie conta gratuita Microsoft</p>
-                                    <p class="text-sm opacity-90">Use qualquer email. Ganhe $200 de créditos grátis!</p>
+                                    <p class="font-semibold">Faça login com sua conta Google</p>
+                                    <p class="text-sm opacity-90">Use qualquer conta Google (Gmail). É 100% gratuito!</p>
                                 </div>
                             </div>
                             
@@ -250,18 +249,8 @@
                                     <span class="font-bold">3</span>
                                 </div>
                                 <div>
-                                    <p class="font-semibold">Crie um "Azure OpenAI Service"</p>
-                                    <p class="text-sm opacity-90">Procure por "OpenAI" → Criar recurso → Escolha região "East US"</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4 mt-1">
-                                    <span class="font-bold">4</span>
-                                </div>
-                                <div>
-                                    <p class="font-semibold">Copie sua chave e endpoint</p>
-                                    <p class="text-sm opacity-90">Vá em "Keys and Endpoint" → Copie KEY 1 e ENDPOINT</p>
+                                    <p class="font-semibold">Clique em "Create API Key"</p>
+                                    <p class="text-sm opacity-90">Copie a chave que aparece (começa com "AIza...")</p>
                                 </div>
                             </div>
                         </div>
@@ -269,27 +258,21 @@
                         <div class="mt-6 p-4 bg-yellow-400 bg-opacity-20 rounded-lg">
                             <div class="flex items-center">
                                 <i class="fas fa-lightbulb text-yellow-300 mr-2"></i>
-                                <p class="text-sm"><strong>Dica:</strong> É 100% gratuito por 12 meses + $200 de créditos!</p>
+                                <p class="text-sm"><strong>Dica:</strong> Sua chave é pessoal e segura. Ninguém mais terá acesso!</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Endpoint do Azure (URL completa):</label>
-                            <input type="text" id="azureEndpoint" placeholder="https://seu-recurso.openai.azure.com/" 
-                                   class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 mb-3">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Chave da API:</label>
+                            <label class="block text-sm font-medium mb-2">Cole sua chave da IA aqui:</label>
                             <div class="flex">
-                                <input type="password" id="azureApiKey" placeholder="Sua chave do Azure..." 
+                                <input type="password" id="geminiApiKey" placeholder="AIza..." 
                                        class="flex-1 px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-l-lg text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
                                 <button onclick="toggleApiKeyVisibility()" class="px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 border-l-0 text-white hover:bg-opacity-30">
                                     <i id="toggleIcon" class="fas fa-eye"></i>
                                 </button>
-                                <button onclick="saveAzureConfig()" class="px-6 py-3 bg-white text-blue-600 font-semibold rounded-r-lg hover:bg-opacity-90 transition duration-300">
+                                <button onclick="saveGeminiKey()" class="px-6 py-3 bg-white text-purple-600 font-semibold rounded-r-lg hover:bg-opacity-90 transition duration-300">
                                     Salvar
                                 </button>
                             </div>
@@ -298,7 +281,7 @@
                         <div id="aiStatus" class="hidden">
                             <div class="flex items-center p-3 bg-green-400 bg-opacity-20 rounded-lg">
                                 <i class="fas fa-check-circle text-green-300 mr-3"></i>
-                                <span class="text-sm">Copilot conectado com sucesso! Agora você pode usar o chat inteligente.</span>
+                                <span class="text-sm">IA conectada com sucesso! Agora você pode usar o chat inteligente.</span>
                             </div>
                         </div>
                     </div>
@@ -310,7 +293,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Concurso</label>
-                            <select id="contestSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <select id="contestSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                                 <option value="">Selecione um concurso</option>
                                 <option value="enem">ENEM</option>
                                 <option value="vestibular">Vestibular</option>
@@ -321,7 +304,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Área de Interesse</label>
-                            <select id="areaSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <select id="areaSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                                 <option value="">Selecione uma área</option>
                             </select>
                         </div>
@@ -364,7 +347,7 @@
                     </div>
                     <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
                         <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
                                 <i class="fas fa-percentage text-xl"></i>
                             </div>
                             <div class="ml-4">
@@ -394,7 +377,7 @@
                     <div id="materialsContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="study-material rounded-lg p-6 card-hover">
                             <div class="text-center mb-4">
-                                <i class="fas fa-book text-4xl text-blue-600 mb-2"></i>
+                                <i class="fas fa-book text-4xl text-purple-600 mb-2"></i>
                                 <h3 class="text-lg font-semibold">Configure seu concurso</h3>
                                 <p class="text-gray-600 text-sm">Primeiro configure seu concurso no Dashboard para ver os materiais</p>
                             </div>
@@ -420,18 +403,15 @@
             <!-- Chat Section -->
             <div id="studentChatSection" class="student-section" style="display: none;">
                 <div class="bg-white rounded-xl shadow-lg p-6 h-96 flex flex-col">
-                    <div class="flex items-center mb-6">
-                        <i class="fab fa-microsoft text-3xl text-blue-600 mr-3"></i>
-                        <h2 class="text-2xl font-bold text-gray-800">Chat com Copilot - Professor Virtual</h2>
-                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Chat com IA - Professor Virtual</h2>
                     
                     <div id="chatNotConfigured" class="flex-1 flex items-center justify-center text-center">
                         <div>
-                            <i class="fab fa-microsoft text-6xl text-gray-400 mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Configure seu Copilot primeiro</h3>
-                            <p class="text-gray-500 mb-4">Vá para o Dashboard e conecte seu Azure OpenAI gratuito</p>
+                            <i class="fas fa-robot text-6xl text-gray-400 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Configure sua IA primeiro</h3>
+                            <p class="text-gray-500 mb-4">Vá para o Dashboard e conecte sua IA Gemini gratuita</p>
                             <button onclick="showStudentSection('dashboard')" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90">
-                                Configurar Copilot
+                                Configurar IA
                             </button>
                         </div>
                     </div>
@@ -440,18 +420,18 @@
                         <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
                             <div class="chat-message mb-4">
                                 <div class="flex items-start">
-                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fab fa-microsoft text-white text-sm"></i>
+                                    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-robot text-white text-sm"></i>
                                     </div>
                                     <div class="bg-white rounded-lg p-3 shadow-sm">
-                                        <p class="text-gray-800">Olá! Sou seu Copilot educacional. Como posso ajudar você hoje? Posso explicar matérias, tirar dúvidas e criar exercícios personalizados!</p>
+                                        <p class="text-gray-800">Olá! Sou seu professor virtual. Como posso ajudar você hoje? Posso explicar matérias, tirar dúvidas e criar exercícios personalizados!</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="flex">
                             <input type="text" id="chatInput" placeholder="Digite sua pergunta..." 
-                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                    onkeypress="if(event.key==='Enter') sendMessage()">
                             <button onclick="sendMessage()" class="gradient-bg text-white px-6 py-3 rounded-r-lg hover:opacity-90 transition duration-300">
                                 <i class="fas fa-paper-plane"></i>
@@ -494,19 +474,19 @@
             <form id="addUserForm" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
-                    <input type="text" id="newUserName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="newUserName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="newUserEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <input type="email" id="newUserEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                    <input type="password" id="newUserPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="newUserPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Plano</label>
-                    <select id="newUserPlan" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <select id="newUserPlan" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                         <option value="basic">Básico</option>
                         <option value="premium">Premium</option>
                         <option value="vip">VIP</option>
@@ -514,7 +494,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Data de Expiração</label>
-                    <input type="date" id="newUserExpiry" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <input type="date" id="newUserExpiry" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
                 </div>
                 <div class="flex justify-end space-x-4 mt-6">
                     <button type="button" onclick="hideAddUserModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
@@ -545,22 +525,23 @@
 
     <script>
         // Firebase Configuration - SUBSTITUA PELAS SUAS CHAVES
-       const firebaseConfig = {
-  apiKey: "AIzaSyCpR8xBkgo4zA9m0-MSl2pI09KsVEKsR9Y",
-  authDomain: "concurso-turbo-ia.firebaseapp.com",
-  projectId: "concurso-turbo-ia",
-  storageBucket: "concurso-turbo-ia.firebasestorage.app",
-  messagingSenderId: "559351714048",
-  appId: "1:559351714048:web:18894243f16acae36763e5"
-};
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY_AQUI",
+            authDomain: "SEU_PROJECT_ID.firebaseapp.com",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_PROJECT_ID.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Azure OpenAI Configuration
-        let userAzureEndpoint = null;
-        let userAzureApiKey = null;
+        // Gemini API Configuration
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        let userGeminiKey = null;
 
         // Global Variables
         let currentUser = null;
@@ -831,12 +812,10 @@
 
         // Student Functions
         function loadStudentData(userData) {
-            // Load Azure configuration if exists
-            if (userData.azureEndpoint && userData.azureApiKey) {
-                userAzureEndpoint = userData.azureEndpoint;
-                userAzureApiKey = userData.azureApiKey;
-                document.getElementById('azureEndpoint').value = userAzureEndpoint;
-                document.getElementById('azureApiKey').value = userAzureApiKey;
+            // Load AI configuration if exists
+            if (userData.geminiApiKey) {
+                userGeminiKey = userData.geminiApiKey;
+                document.getElementById('geminiApiKey').value = userGeminiKey;
                 document.getElementById('aiStatus').classList.remove('hidden');
                 document.getElementById('aiConfigSection').style.display = 'none';
                 updateChatInterface(true);
@@ -863,9 +842,9 @@
             document.getElementById('userRanking').textContent = '#' + (userData.ranking || 'N/A');
         }
 
-        // Azure Configuration Functions
+        // AI Configuration Functions
         function toggleApiKeyVisibility() {
-            const input = document.getElementById('azureApiKey');
+            const input = document.getElementById('geminiApiKey');
             const icon = document.getElementById('toggleIcon');
             
             if (input.type === 'password') {
@@ -879,17 +858,16 @@
             }
         }
 
-        async function saveAzureConfig() {
-            const endpoint = document.getElementById('azureEndpoint').value.trim();
-            const apiKey = document.getElementById('azureApiKey').value.trim();
+        async function saveGeminiKey() {
+            const apiKey = document.getElementById('geminiApiKey').value.trim();
             
-            if (!endpoint || !apiKey) {
-                alert('❌ CAMPOS OBRIGATÓRIOS!\n\nPor favor, preencha:\n✅ Endpoint do Azure\n✅ Chave da API');
+            if (!apiKey) {
+                alert('Por favor, insira sua chave da API');
                 return;
             }
 
-            if (!endpoint.includes('openai.azure.com')) {
-                alert('❌ ENDPOINT INVÁLIDO!\n\nO endpoint deve ser algo como:\nhttps://seu-recurso.openai.azure.com/\n\n✅ ONDE ENCONTRAR:\n1. Vá para portal.azure.com\n2. Abra seu recurso OpenAI\n3. Clique em "Keys and Endpoint"\n4. Copie o "Endpoint"');
+            if (!apiKey.startsWith('AIza')) {
+                alert('❌ CHAVE INVÁLIDA!\n\nA chave deve começar com "AIza"\n\nSua chave atual: ' + apiKey.substring(0, 10) + '...\n\n✅ COMO CORRIGIR:\n1. Vá para: https://aistudio.google.com/app/apikey\n2. Faça login com Google\n3. Clique "Create API Key"\n4. Copie a chave completa (começa com AIza)');
                 return;
             }
 
@@ -900,26 +878,24 @@
             saveButton.disabled = true;
 
             try {
-                console.log('🔍 Testando configuração do Azure...');
+                console.log('🔍 Testando chave da API...');
                 
-                // Test the Azure OpenAI API
-                const testEndpoint = `${endpoint.replace(/\/$/, '')}/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-02-15-preview`;
-                
-                const testResponse = await fetch(testEndpoint, {
+                // Test the API key with a simple request
+                const testResponse = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'api-key': apiKey
                     },
                     body: JSON.stringify({
-                        messages: [
-                            {
-                                role: "user",
-                                content: "Teste"
-                            }
-                        ],
-                        max_tokens: 10,
-                        temperature: 0.1
+                        contents: [{
+                            parts: [{
+                                text: 'Teste'
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.1,
+                            maxOutputTokens: 10
+                        }
                     })
                 });
 
@@ -934,22 +910,20 @@
                     throw new Error('Resposta inválida da API');
                 }
                 
-                if (testResponse.ok && responseData.choices && responseData.choices.length > 0) {
-                    console.log('✅ Azure OpenAI funcionando!');
+                if (testResponse.ok && responseData.candidates && responseData.candidates.length > 0) {
+                    console.log('✅ API funcionando!');
                     
                     // Save to user profile
                     await db.collection('users').doc(currentUser.uid).update({
-                        azureEndpoint: endpoint,
-                        azureApiKey: apiKey
+                        geminiApiKey: apiKey
                     });
 
-                    userAzureEndpoint = endpoint;
-                    userAzureApiKey = apiKey;
+                    userGeminiKey = apiKey;
                     document.getElementById('aiStatus').classList.remove('hidden');
                     document.getElementById('aiConfigSection').style.display = 'none';
                     updateChatInterface(true);
                     
-                    alert('🎉 COPILOT CONECTADO COM SUCESSO!\n\nAgora você pode usar o chat inteligente!');
+                    alert('🎉 IA CONECTADA COM SUCESSO!\n\nAgora você pode usar o chat inteligente!');
                 } else {
                     console.error('❌ Erro da API:', responseData);
                     
@@ -959,21 +933,21 @@
                         const error = responseData.error;
                         console.log('🔍 Detalhes do erro:', error);
                         
-                        if (error.code === 'InvalidApiKeyOrEndpoint' || error.code === 'Unauthorized') {
-                            errorMessage += '🔑 CHAVE OU ENDPOINT INVÁLIDO\n\nSua configuração não foi aceita.\n\n✅ SOLUÇÃO:\n1. Verifique se copiou o endpoint completo\n2. Verifique se copiou a chave correta\n3. Certifique-se que o recurso está ativo';
-                        } else if (error.code === 'DeploymentNotFound') {
-                            errorMessage += '🚀 MODELO NÃO ENCONTRADO\n\nO modelo GPT-3.5-turbo não está implantado.\n\n✅ SOLUÇÃO:\n1. Vá para Azure OpenAI Studio\n2. Clique em "Deployments"\n3. Crie um deployment do "gpt-35-turbo"';
-                        } else if (error.code === 'QuotaExceeded') {
-                            errorMessage += '📊 COTA EXCEDIDA\n\nVocê atingiu o limite de uso.\n\n✅ SOLUÇÃO:\n1. Aguarde a renovação da cota\n2. Ou aumente o limite no Azure';
-                        } else if (error.code === 'ResourceNotFound') {
-                            errorMessage += '🔍 RECURSO NÃO ENCONTRADO\n\nO endpoint não existe.\n\n✅ SOLUÇÃO:\n1. Verifique se o recurso foi criado\n2. Confirme o nome do recurso\n3. Verifique a região';
+                        if (error.code === 400) {
+                            if (error.message.includes('API key not valid')) {
+                                errorMessage += '🔑 CHAVE INVÁLIDA\n\nSua chave não foi aceita pelo Google.\n\n✅ SOLUÇÃO:\n1. Vá para: https://aistudio.google.com/app/apikey\n2. Delete a chave atual\n3. Crie uma nova chave\n4. Copie e cole aqui';
+                            } else if (error.message.includes('quota')) {
+                                errorMessage += '📊 COTA EXCEDIDA\n\nVocê atingiu o limite gratuito.\n\n✅ SOLUÇÃO:\n1. Aguarde até amanhã\n2. Ou crie uma nova conta Google\n3. Gere uma nova chave';
+                            } else {
+                                errorMessage += `🔧 ERRO TÉCNICO:\n${error.message}\n\n✅ TENTE:\n1. Criar nova chave\n2. Verificar se aceitou os termos`;
+                            }
+                        } else if (error.code === 403) {
+                            errorMessage += '🚫 ACESSO NEGADO\n\nA API não está ativada.\n\n✅ SOLUÇÃO:\n1. Vá para: https://aistudio.google.com/app/apikey\n2. Aceite todos os termos\n3. Ative a API Gemini\n4. Gere nova chave';
                         } else {
-                            errorMessage += `🔧 ERRO TÉCNICO:\nCódigo: ${error.code}\nMensagem: ${error.message}\n\n✅ TENTE:\n1. Recriar o recurso\n2. Verificar permissões\n3. Aguardar alguns minutos`;
+                            errorMessage += `❓ ERRO DESCONHECIDO:\nCódigo: ${error.code}\nMensagem: ${error.message}`;
                         }
                     } else if (testResponse.status === 404) {
-                        errorMessage += '🔍 ENDPOINT INCORRETO\n\nA URL não foi encontrada.\n\n✅ POSSÍVEIS CAUSAS:\n1. Endpoint mal formatado\n2. Recurso não existe\n3. Região incorreta\n\n✅ FORMATO CORRETO:\nhttps://SEU-RECURSO.openai.azure.com/';
-                    } else if (testResponse.status === 401) {
-                        errorMessage += '🔐 NÃO AUTORIZADO\n\nChave da API inválida.\n\n✅ SOLUÇÃO:\n1. Vá para portal.azure.com\n2. Abra seu recurso OpenAI\n3. Clique "Keys and Endpoint"\n4. Copie KEY 1 ou KEY 2';
+                        errorMessage += '🔍 URL INCORRETA\n\nA API não foi encontrada.\n\n✅ POSSÍVEL CAUSA:\nProblema temporário do Google.\nTente novamente em alguns minutos.';
                     } else {
                         errorMessage += `📡 ERRO HTTP ${testResponse.status}\n\nResposta: ${JSON.stringify(responseData, null, 2)}`;
                     }
@@ -990,7 +964,7 @@
                 } else if (error.message.includes('CORS')) {
                     userMessage += '🔒 ERRO DE SEGURANÇA\n\nProblema de CORS. Tente:\n1. Usar outro navegador\n2. Desativar extensões\n3. Limpar cache';
                 } else {
-                    userMessage += `🔧 ERRO TÉCNICO:\n${error.message}\n\n🆘 PRECISA DE AJUDA?\n\n1. Verifique se o recurso Azure está ativo\n2. Confirme se tem créditos disponíveis\n3. Tente recriar o recurso OpenAI`;
+                    userMessage += `🔧 ERRO TÉCNICO:\n${error.message}\n\n🆘 PRECISA DE AJUDA?\n\n1. Copie este erro\n2. Mande para o suporte\n3. Inclua sua chave (primeiros 10 caracteres): ${apiKey.substring(0, 10)}...`;
                 }
                 
                 alert(userMessage);
@@ -1025,12 +999,12 @@
 
             // Update navigation
             document.querySelectorAll('.student-nav-btn').forEach(btn => {
-                btn.classList.remove('border-blue-500', 'text-blue-600');
+                btn.classList.remove('border-purple-500', 'text-purple-600');
                 btn.classList.add('border-transparent', 'text-gray-500');
             });
 
             event.target.classList.remove('border-transparent', 'text-gray-500');
-            event.target.classList.add('border-blue-500', 'text-blue-600');
+            event.target.classList.add('border-purple-500', 'text-purple-600');
         }
 
         // Contest Configuration
@@ -1091,7 +1065,7 @@
             const materials = studyMaterialsDB[currentContest]?.[currentArea];
             if (materials) {
                 studyPlanContent.innerHTML = materials.topics.map(topic => `
-                    <div class="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg p-6 text-white card-hover">
+                    <div class="bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg p-6 text-white card-hover">
                         <h3 class="text-lg font-semibold mb-2">${topic}</h3>
                         <p class="text-sm opacity-90 mb-4">Tópico essencial para ${currentArea}</p>
                         <button onclick="studyTopic('${topic}')" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
@@ -1142,8 +1116,8 @@
                     </div>
                     <div class="study-material rounded-lg p-6 card-hover">
                         <div class="text-center mb-4">
-                            <i class="fab fa-microsoft text-4xl text-blue-600 mb-2"></i>
-                            <h3 class="text-lg font-semibold">Exercícios Copilot</h3>
+                            <i class="fas fa-brain text-4xl text-purple-600 mb-2"></i>
+                            <h3 class="text-lg font-semibold">Exercícios IA</h3>
                             <p class="text-gray-600 text-sm">Gerados pela inteligência artificial</p>
                         </div>
                         <button onclick="generateAIExercises()" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
@@ -1250,7 +1224,7 @@
                             <span id="timer" class="text-sm font-semibold text-red-600">${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
-                            <div class="bg-blue-600 h-2 rounded-full progress-bar" style="width: ${((currentQuestion + 1) / questions.length) * 100}%"></div>
+                            <div class="bg-purple-600 h-2 rounded-full progress-bar" style="width: ${((currentQuestion + 1) / questions.length) * 100}%"></div>
                         </div>
                     </div>
                     
@@ -1405,8 +1379,8 @@
 
         // Chat Functions
         async function sendMessage() {
-            if (!userAzureEndpoint || !userAzureApiKey) {
-                alert('Configure seu Copilot primeiro no Dashboard');
+            if (!userGeminiKey) {
+                alert('Configure sua IA primeiro no Dashboard');
                 return;
             }
 
@@ -1423,19 +1397,19 @@
             addTypingIndicator();
 
             try {
-                // Call Azure OpenAI API
-                const response = await callAzureOpenAI(message);
+                // Call Gemini API
+                const response = await callGeminiAPI(message);
                 removeTypingIndicator();
                 addMessageToChat(response, 'ai');
             } catch (error) {
                 removeTypingIndicator();
-                addMessageToChat('Desculpe, ocorreu um erro. Verifique sua conexão com o Copilot.', 'ai');
+                addMessageToChat('Desculpe, ocorreu um erro. Verifique sua conexão com a IA.', 'ai');
             }
         }
 
-        async function callAzureOpenAI(message) {
-            if (!userAzureEndpoint || !userAzureApiKey) {
-                throw new Error('Copilot não configurado');
+        async function callGeminiAPI(message) {
+            if (!userGeminiKey) {
+                throw new Error('IA não configurada');
             }
 
             // Construct context-aware prompt
@@ -1444,25 +1418,24 @@
             
             Pergunta do aluno: ${message}`;
 
-            const endpoint = `${userAzureEndpoint.replace(/\/$/, '')}/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-02-15-preview`;
-
             const requestBody = {
-                messages: [
-                    {
-                        role: "user",
-                        content: contextPrompt
-                    }
-                ],
-                max_tokens: 1000,
-                temperature: 0.7,
-                top_p: 0.95
+                contents: [{
+                    parts: [{
+                        text: contextPrompt
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 1024,
+                }
             };
 
-            const response = await fetch(endpoint, {
+            const response = await fetch(`${GEMINI_API_URL}?key=${userGeminiKey}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'api-key': userAzureApiKey
                 },
                 body: JSON.stringify(requestBody)
             });
@@ -1472,7 +1445,7 @@
             }
 
             const data = await response.json();
-            return data.choices[0].message.content;
+            return data.candidates[0].content.parts[0].text;
         }
 
         function addMessageToChat(message, sender) {
@@ -1483,7 +1456,7 @@
             if (sender === 'user') {
                 messageDiv.innerHTML = `
                     <div class="flex items-start justify-end">
-                        <div class="bg-blue-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
+                        <div class="bg-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
                             <p class="text-sm">${message}</p>
                         </div>
                         <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center ml-3">
@@ -1494,8 +1467,8 @@
             } else {
                 messageDiv.innerHTML = `
                     <div class="flex items-start">
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-                            <i class="fab fa-microsoft text-white text-sm"></i>
+                        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-robot text-white text-sm"></i>
                         </div>
                         <div class="bg-white rounded-lg p-3 shadow-sm max-w-xs">
                             <p class="text-sm text-gray-800">${message}</p>
@@ -1515,8 +1488,8 @@
             typingDiv.className = 'chat-message mb-4';
             typingDiv.innerHTML = `
                 <div class="flex items-start">
-                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-                        <i class="fab fa-microsoft text-white text-sm"></i>
+                    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-robot text-white text-sm"></i>
                     </div>
                     <div class="bg-white rounded-lg p-3 shadow-sm">
                         <p class="text-sm text-gray-800 typing-animation">Digitando...</p>
@@ -1536,8 +1509,8 @@
 
         // AI Exercise Generation
         async function generateAIExercises() {
-            if (!userAzureEndpoint || !userAzureApiKey) {
-                alert('Configure seu Copilot primeiro no Dashboard');
+            if (!userGeminiKey) {
+                alert('Configure sua IA primeiro no Dashboard');
                 return;
             }
 
@@ -1556,21 +1529,21 @@
                 
                 Torne as questões desafiadoras mas justas para o nível do concurso.`;
 
-                const response = await callAzureOpenAI(prompt);
+                const response = await callGeminiAPI(prompt);
                 
                 // Display generated exercises
                 const modal = document.getElementById('simulationModal');
                 const title = document.getElementById('simulationTitle');
                 const content = document.getElementById('simulationContent');
 
-                title.textContent = `Exercícios Gerados por Copilot - ${currentArea}`;
+                title.textContent = `Exercícios Gerados por IA - ${currentArea}`;
                 content.innerHTML = `
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                         <div class="flex items-center">
-                            <i class="fab fa-microsoft text-blue-600 text-xl mr-3"></i>
+                            <i class="fas fa-robot text-green-600 text-xl mr-3"></i>
                             <div>
-                                <h3 class="font-semibold text-blue-800">Exercícios Personalizados</h3>
-                                <p class="text-sm text-blue-600">Gerados especialmente para você pelo Copilot</p>
+                                <h3 class="font-semibold text-green-800">Exercícios Personalizados</h3>
+                                <p class="text-sm text-green-600">Gerados especialmente para você pela IA</p>
                             </div>
                         </div>
                     </div>
@@ -1581,7 +1554,7 @@
                         <button onclick="closeSimulation()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 mr-3">
                             Fechar
                         </button>
-                        <button onclick="generateAIExercises()" class="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50">
+                        <button onclick="generateAIExercises()" class="border border-purple-600 text-purple-600 px-6 py-2 rounded-lg hover:bg-purple-50">
                             Gerar Novos
                         </button>
                     </div>
@@ -1597,7 +1570,8 @@
             alert(`Iniciando estudo do tópico: ${topic}\n\nEm breve você terá acesso a conteúdo personalizado sobre este tópico!`);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cca9c796b5a432',t:'MTc1NDc5OTIzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cc9e19a1fbf3f1',t:'MTc1NDc5ODc1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
