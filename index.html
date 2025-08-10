@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduSmart Pro - Sistema Completo de Estudos</title>
+    <title>Concurso Turbo IA - Sistema Completo de Estudos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -24,6 +24,9 @@
         .study-material { background: linear-gradient(145deg, #f8fafc, #e2e8f0); }
         .gemini-gradient { background: linear-gradient(135deg, #4285f4 0%, #34a853 25%, #fbbc05 50%, #ea4335 75%, #4285f4 100%); }
         .gemini-text { background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .countdown-timer { font-family: 'Courier New', monospace; }
+        .progress-ring { transform: rotate(-90deg); }
+        .progress-ring-circle { transition: stroke-dasharray 0.35s; }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -31,7 +34,7 @@
     <div id="loadingScreen" class="fixed inset-0 gradient-bg flex items-center justify-center z-50">
         <div class="text-center text-white">
             <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-            <h2 class="text-2xl font-bold">EduSmart Pro</h2>
+            <h2 class="text-3xl font-bold">Concurso Turbo IA</h2>
             <p class="text-lg opacity-90">Carregando seu ambiente de estudos...</p>
         </div>
     </div>
@@ -41,9 +44,9 @@
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div class="text-center mb-8">
                 <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                    <i class="fas fa-rocket text-white text-3xl"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-800">EduSmart Pro</h1>
+                <h1 class="text-3xl font-bold text-gray-800">Concurso Turbo IA</h1>
                 <p class="text-gray-600 mt-2">Sistema Inteligente de Estudos</p>
                 <div class="mt-4 p-3 gemini-gradient rounded-lg">
                     <p class="text-white text-sm font-semibold">🤖 Powered by Google Gemini AI</p>
@@ -79,7 +82,7 @@
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center">
                         <i class="fas fa-user-shield text-2xl mr-3"></i>
-                        <h1 class="text-2xl font-bold">Painel Administrativo</h1>
+                        <h1 class="text-2xl font-bold">Painel Administrativo - Concurso Turbo IA</h1>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span id="adminName" class="text-lg"></span>
@@ -91,78 +94,172 @@
             </div>
         </header>
 
+        <!-- Admin Navigation -->
+        <nav class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-8">
+                    <button onclick="showAdminSection('dashboard')" class="admin-nav-btn py-4 px-2 border-b-2 border-blue-500 text-blue-600 font-medium">
+                        <i class="fas fa-chart-line mr-2"></i>Dashboard
+                    </button>
+                    <button onclick="showAdminSection('users')" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-users mr-2"></i>Usuários
+                    </button>
+                    <button onclick="showAdminSection('contests')" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-trophy mr-2"></i>Concursos
+                    </button>
+                    <button onclick="showAdminSection('ai-config')" class="admin-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-robot mr-2"></i>Config IA
+                    </button>
+                </div>
+            </div>
+        </nav>
+
         <!-- Admin Content -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                            <i class="fas fa-users text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Total de Usuários</p>
-                            <p id="totalUsers" class="text-2xl font-bold text-gray-900">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-green-100 text-green-600">
-                            <i class="fas fa-user-check text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Usuários Ativos</p>
-                            <p id="activeUsers" class="text-2xl font-bold text-gray-900">0</p>
+            <!-- Dashboard Section -->
+            <div id="adminDashboardSection" class="admin-section">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total de Usuários</p>
+                                <p id="totalUsers" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                            <i class="fas fa-book text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Simulados Realizados</p>
-                            <p id="totalSimulations" class="text-2xl font-bold text-gray-900">0</p>
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-user-check text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Usuários Ativos</p>
+                                <p id="activeUsers" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                            <i class="fas fa-chart-line text-xl"></i>
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-book text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Simulados Realizados</p>
+                                <p id="totalSimulations" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
                         </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-600">Taxa de Aprovação</p>
-                            <p id="approvalRate" class="text-2xl font-bold text-gray-900">0%</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-chart-line text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Taxa de Aprovação</p>
+                                <p id="approvalRate" class="text-2xl font-bold text-gray-900">0%</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- User Management -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Gerenciar Usuários</h2>
-                    <button onclick="showAddUserModal()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition duration-300">
-                        <i class="fas fa-plus mr-2"></i>Adicionar Usuário
-                    </button>
+            <!-- Users Section -->
+            <div id="adminUsersSection" class="admin-section" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Gerenciar Usuários</h2>
+                        <button onclick="showAddUserModal()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition duration-300">
+                            <i class="fas fa-plus mr-2"></i>Adicionar Usuário
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plano</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progresso</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plano</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTable" class="bg-white divide-y divide-gray-200">
-                        </tbody>
-                    </table>
+            </div>
+
+            <!-- AI Config Section -->
+            <div id="adminAi-configSection" class="admin-section" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Configuração da IA Gemini</h2>
+                    
+                    <div class="gemini-gradient rounded-lg p-6 mb-6 text-white">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-robot text-3xl mr-4"></i>
+                            <div>
+                                <h3 class="text-xl font-bold">Google Gemini AI Integration</h3>
+                                <p class="opacity-90">Configure a API do Gemini para funcionalidades avançadas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="geminiConfigForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-key mr-2"></i>Chave da API Gemini
+                            </label>
+                            <input type="password" id="geminiApiKey" 
+                                   placeholder="Cole sua chave da API do Google Gemini aqui..."
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <p class="text-sm text-gray-600 mt-2">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Obtenha sua chave em: <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a>
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-cog mr-2"></i>Modelo Gemini
+                            </label>
+                            <select id="geminiModel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="gemini-pro">Gemini Pro (Recomendado)</option>
+                                <option value="gemini-pro-vision">Gemini Pro Vision</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-thermometer-half mr-2"></i>Temperatura da IA (Criatividade)
+                            </label>
+                            <input type="range" id="geminiTemperature" min="0" max="1" step="0.1" value="0.7" 
+                                   class="w-full">
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>Conservador (0)</span>
+                                <span id="temperatureValue">0.7</span>
+                                <span>Criativo (1)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <button type="submit" class="gradient-bg text-white px-6 py-3 rounded-lg hover:opacity-90 transition duration-300">
+                                <i class="fas fa-save mr-2"></i>Salvar Configuração
+                            </button>
+                            <button type="button" onclick="testGeminiConnection()" class="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition duration-300">
+                                <i class="fas fa-plug mr-2"></i>Testar Conexão
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="geminiStatus" class="mt-6 p-4 rounded-lg hidden">
+                        <!-- Status will be shown here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,13 +272,17 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center">
-                        <i class="fas fa-graduation-cap text-2xl mr-3"></i>
-                        <h1 class="text-2xl font-bold">EduSmart Pro</h1>
+                        <i class="fas fa-rocket text-2xl mr-3"></i>
+                        <h1 class="text-2xl font-bold">Concurso Turbo IA</h1>
                         <div class="ml-4 px-3 py-1 bg-white bg-opacity-20 rounded-full">
                             <span class="text-sm font-semibold">🤖 Gemini AI</span>
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Tempo restante</div>
+                            <div id="timeRemaining" class="countdown-timer text-lg font-bold">--</div>
+                        </div>
                         <span id="studentName" class="text-lg"></span>
                         <button onclick="logout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
                             <i class="fas fa-sign-out-alt mr-2"></i>Sair
@@ -197,6 +298,9 @@
                 <div class="flex space-x-8">
                     <button onclick="showStudentSection('dashboard')" class="student-nav-btn py-4 px-2 border-b-2 border-blue-500 text-blue-600 font-medium">
                         <i class="fas fa-home mr-2"></i>Dashboard
+                    </button>
+                    <button onclick="showStudentSection('profile')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                        <i class="fas fa-user mr-2"></i>Perfil
                     </button>
                     <button onclick="showStudentSection('materials')" class="student-nav-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
                         <i class="fas fa-book mr-2"></i>Materiais
@@ -218,75 +322,25 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Dashboard Section -->
             <div id="studentDashboardSection" class="student-section">
-                <!-- Gemini AI Status -->
-                <div class="gemini-gradient rounded-xl shadow-lg p-6 mb-8 text-white">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-robot text-4xl mr-4"></i>
-                        <div>
-                            <h2 class="text-2xl font-bold">Google Gemini AI Integrado</h2>
-                            <p class="opacity-90">Sua inteligência artificial educacional está pronta para usar!</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white bg-opacity-10 rounded-lg p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="text-center">
-                                <i class="fas fa-comments text-3xl mb-2"></i>
-                                <h3 class="font-semibold">Chat Inteligente</h3>
-                                <p class="text-sm opacity-90">Tire dúvidas em tempo real</p>
-                            </div>
-                            <div class="text-center">
-                                <i class="fas fa-lightbulb text-3xl mb-2"></i>
-                                <h3 class="font-semibold">Exercícios Personalizados</h3>
-                                <p class="text-sm opacity-90">Criados especialmente para você</p>
-                            </div>
-                            <div class="text-center">
-                                <i class="fas fa-brain text-3xl mb-2"></i>
-                                <h3 class="font-semibold">Explicações Detalhadas</h3>
-                                <p class="text-sm opacity-90">Aprenda de forma intuitiva</p>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6 text-center">
-                            <div class="inline-flex items-center px-4 py-2 bg-green-500 bg-opacity-20 rounded-full">
-                                <i class="fas fa-check-circle text-green-300 mr-2"></i>
-                                <span class="text-sm font-semibold">Gemini AI Ativo e Funcionando</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contest Configuration -->
+                <!-- Study Progress Ring -->
                 <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Configurar Concurso</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-center justify-between">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Concurso</label>
-                            <select id="contestSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Selecione um concurso</option>
-                                <option value="enem">ENEM</option>
-                                <option value="vestibular">Vestibular</option>
-                                <option value="concurso-publico">Concurso Público</option>
-                                <option value="oab">OAB</option>
-                                <option value="medicina">Medicina</option>
-                            </select>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Progresso de Estudos</h2>
+                            <p class="text-gray-600">Acompanhe seu desempenho diário</p>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Área de Interesse</label>
-                            <select id="areaSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Selecione uma área</option>
-                            </select>
+                        <div class="relative">
+                            <svg class="progress-ring w-24 h-24">
+                                <circle class="progress-ring-circle stroke-current text-gray-300" 
+                                        stroke-width="4" fill="transparent" r="40" cx="48" cy="48"/>
+                                <circle id="progressCircle" class="progress-ring-circle stroke-current text-blue-600" 
+                                        stroke-width="4" fill="transparent" r="40" cx="48" cy="48"
+                                        stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="progressPercentage" class="text-lg font-bold text-gray-800">0%</span>
+                            </div>
                         </div>
-                    </div>
-                    <button onclick="saveContestConfig()" class="mt-6 gradient-bg text-white px-6 py-3 rounded-lg hover:opacity-90 transition duration-300">
-                        <i class="fas fa-save mr-2"></i>Salvar Configuração
-                    </button>
-                </div>
-
-                <!-- Study Plan -->
-                <div id="studyPlanSection" class="bg-white rounded-xl shadow-lg p-6 mb-8" style="display: none;">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Seu Plano de Estudos</h2>
-                    <div id="studyPlanContent" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     </div>
                 </div>
 
@@ -337,19 +391,177 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Study Plan -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Plano de Estudos Personalizado</h2>
+                    <div id="studyPlanContent" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center py-8">
+                            <i class="fas fa-user-cog text-4xl text-gray-400 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-600 mb-2">Configure seu perfil</h3>
+                            <p class="text-gray-500 mb-4">Complete seus dados para receber um plano personalizado</p>
+                            <button onclick="showStudentSection('profile')" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90">
+                                Configurar Agora
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="studentProfileSection" class="student-section" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Configurar Perfil de Estudos</h2>
+                    
+                    <form id="profileForm" class="space-y-6">
+                        <!-- Personal Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                                <input type="text" id="fullName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Data de Nascimento</label>
+                                <input type="date" id="birthDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <!-- Contest Info -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Informações do Concurso</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Concurso</label>
+                                    <select id="contestType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Selecione um concurso</option>
+                                        <option value="enem">ENEM</option>
+                                        <option value="vestibular">Vestibular</option>
+                                        <option value="concurso-publico">Concurso Público</option>
+                                        <option value="oab">OAB</option>
+                                        <option value="medicina">Medicina</option>
+                                        <option value="engenharia">Engenharia</option>
+                                        <option value="direito">Direito</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Instituição/Órgão</label>
+                                    <input type="text" id="institution" placeholder="Ex: INEP, FGV, CESPE..." 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Data da Prova</label>
+                                    <input type="date" id="examDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Cargo/Curso Desejado</label>
+                                    <input type="text" id="targetPosition" placeholder="Ex: Analista, Medicina, Direito..." 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Study Preferences -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Preferências de Estudo</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Horas por Dia</label>
+                                    <select id="dailyHours" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="2">2 horas</option>
+                                        <option value="4">4 horas</option>
+                                        <option value="6">6 horas</option>
+                                        <option value="8">8 horas</option>
+                                        <option value="10">10+ horas</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Melhor Horário</label>
+                                    <select id="studyTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="manha">Manhã</option>
+                                        <option value="tarde">Tarde</option>
+                                        <option value="noite">Noite</option>
+                                        <option value="madrugada">Madrugada</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nível Atual</label>
+                                    <select id="currentLevel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="iniciante">Iniciante</option>
+                                        <option value="intermediario">Intermediário</option>
+                                        <option value="avancado">Avançado</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subject Priorities -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Matérias Prioritárias</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="portugues" class="subject-checkbox mr-2">
+                                    <span class="text-sm">Português</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="matematica" class="subject-checkbox mr-2">
+                                    <span class="text-sm">Matemática</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="historia" class="subject-checkbox mr-2">
+                                    <span class="text-sm">História</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="geografia" class="subject-checkbox mr-2">
+                                    <span class="text-sm">Geografia</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="fisica" class="subject-checkbox mr-2">
+                                    <span class="text-sm">Física</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="quimica" class="subject-checkbox mr-2">
+                                    <span class="text-sm">Química</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="biologia" class="subject-checkbox mr-2">
+                                    <span class="text-sm">Biologia</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="direito" class="subject-checkbox mr-2">
+                                    <span class="text-sm">Direito</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-4 pt-6">
+                            <button type="button" onclick="resetProfile()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                Limpar
+                            </button>
+                            <button type="submit" class="gradient-bg text-white px-6 py-3 rounded-lg hover:opacity-90">
+                                <i class="fas fa-save mr-2"></i>Salvar Perfil
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Materials Section -->
             <div id="studentMaterialsSection" class="student-section" style="display: none;">
                 <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Materiais de Estudo</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Materiais de Estudo</h2>
+                        <button onclick="generateAIMaterials()" class="gemini-gradient text-white px-6 py-2 rounded-lg hover:opacity-90">
+                            <i class="fas fa-robot mr-2"></i>Gerar com IA
+                        </button>
+                    </div>
                     <div id="materialsContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="study-material rounded-lg p-6 card-hover">
-                            <div class="text-center mb-4">
-                                <i class="fas fa-book text-4xl text-blue-600 mb-2"></i>
-                                <h3 class="text-lg font-semibold">Configure seu concurso</h3>
-                                <p class="text-gray-600 text-sm">Primeiro configure seu concurso no Dashboard para ver os materiais</p>
-                            </div>
+                        <div class="study-material rounded-lg p-6 card-hover text-center">
+                            <i class="fas fa-user-cog text-4xl text-gray-400 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-600 mb-2">Configure seu perfil</h3>
+                            <p class="text-gray-500 text-sm">Complete seu perfil para ver materiais personalizados</p>
                         </div>
                     </div>
                 </div>
@@ -358,12 +570,17 @@
             <!-- Simulations Section -->
             <div id="studentSimulationsSection" class="student-section" style="display: none;">
                 <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Simulados</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Simulados</h2>
+                        <button onclick="generateAISimulation()" class="gemini-gradient text-white px-6 py-2 rounded-lg hover:opacity-90">
+                            <i class="fas fa-robot mr-2"></i>Criar com IA
+                        </button>
+                    </div>
                     <div id="simulationsContent">
                         <div class="text-center py-12">
                             <i class="fas fa-clipboard-list text-6xl text-gray-400 mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Configure seu concurso primeiro</h3>
-                            <p class="text-gray-500">Vá para o Dashboard e configure seu concurso para ver os simulados disponíveis</p>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Configure seu perfil primeiro</h3>
+                            <p class="text-gray-500">Complete seu perfil para ver simulados personalizados</p>
                         </div>
                     </div>
                 </div>
@@ -380,6 +597,12 @@
                             <h2 class="text-2xl font-bold gemini-text">Gemini AI - Professor Virtual</h2>
                             <p class="text-sm text-gray-600">Inteligência artificial educacional do Google</p>
                         </div>
+                        <div class="ml-auto">
+                            <div id="aiStatus" class="flex items-center px-3 py-1 rounded-full text-sm">
+                                <i class="fas fa-circle text-red-500 mr-2"></i>
+                                <span>IA Desconectada</span>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="flex-1 flex flex-col">
@@ -390,7 +613,7 @@
                                         <i class="fas fa-robot text-white text-sm"></i>
                                     </div>
                                     <div class="bg-white rounded-lg p-3 shadow-sm">
-                                        <p class="text-gray-800">Olá! Sou o Gemini, sua IA educacional! 🤖 Como posso ajudar você hoje? Posso explicar matérias, criar exercícios personalizados, tirar dúvidas e muito mais!</p>
+                                        <p class="text-gray-800">Olá! Sou o Gemini, sua IA educacional! 🤖 Configure a API no painel administrativo para começarmos a conversar!</p>
                                     </div>
                                 </div>
                             </div>
@@ -398,8 +621,8 @@
                         <div class="flex">
                             <input type="text" id="chatInput" placeholder="Digite sua pergunta para o Gemini..." 
                                    class="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                   onkeypress="if(event.key==='Enter') sendMessage()">
-                            <button onclick="sendMessage()" class="gemini-gradient text-white px-6 py-3 rounded-r-lg hover:opacity-90 transition duration-300">
+                                   onkeypress="if(event.key==='Enter') sendMessage()" disabled>
+                            <button onclick="sendMessage()" class="gemini-gradient text-white px-6 py-3 rounded-r-lg hover:opacity-90 transition duration-300" disabled>
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
@@ -415,7 +638,7 @@
                         <div id="subjectProgress" class="space-y-4">
                             <div class="text-center py-8">
                                 <i class="fas fa-chart-bar text-4xl text-gray-400 mb-4"></i>
-                                <p class="text-gray-600">Configure seu concurso para ver o progresso</p>
+                                <p class="text-gray-600">Configure seu perfil para ver o progresso</p>
                             </div>
                         </div>
                     </div>
@@ -427,6 +650,14 @@
                                 <p class="text-gray-600">Nenhum simulado realizado ainda</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Study Calendar -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Calendário de Estudos</h2>
+                    <div id="studyCalendar" class="grid grid-cols-7 gap-2">
+                        <!-- Calendar will be generated here -->
                     </div>
                 </div>
             </div>
@@ -492,93 +723,26 @@
     <script>
         // Firebase Configuration - SUBSTITUA PELAS SUAS CHAVES
         const firebaseConfig = {
-  apiKey: "AIzaSyCpR8xBkgo4zA9m0-MSl2pI09KsVEKsR9Y",
-  authDomain: "concurso-turbo-ia.firebaseapp.com",
-  projectId: "concurso-turbo-ia",
-  storageBucket: "concurso-turbo-ia.firebasestorage.app",
-  messagingSenderId: "559351714048",
-  appId: "1:559351714048:web:18894243f16acae36763e5"
-};
+            apiKey: "SUA_API_KEY_AQUI",
+            authDomain: "SEU_PROJECT_ID.firebaseapp.com",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_PROJECT_ID.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Gemini AI Configuration - Integrado automaticamente
-        const GEMINI_API_KEY = 'AIzaSyDemoKeyForEducationalPurposes'; // Chave demo para demonstração
-        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-
         // Global Variables
         let currentUser = null;
-        let currentContest = null;
-        let currentArea = null;
-        let studyMaterials = {};
-        let questionBank = {};
-
-        // Contest and Area Configuration
-        const contestAreas = {
-            'enem': ['Linguagens', 'Matemática', 'Ciências da Natureza', 'Ciências Humanas', 'Redação'],
-            'vestibular': ['Português', 'Matemática', 'Física', 'Química', 'Biologia', 'História', 'Geografia'],
-            'concurso-publico': ['Português', 'Matemática', 'Direito Constitucional', 'Direito Administrativo', 'Informática'],
-            'oab': ['Direito Constitucional', 'Direito Civil', 'Direito Penal', 'Direito do Trabalho', 'Ética Profissional'],
-            'medicina': ['Anatomia', 'Fisiologia', 'Patologia', 'Farmacologia', 'Clínica Médica']
-        };
-
-        // Study Materials Database
-        const studyMaterialsDB = {
-            'enem': {
-                'Matemática': {
-                    topics: ['Álgebra', 'Geometria', 'Estatística', 'Funções', 'Trigonometria'],
-                    videos: [
-                        { title: 'Função Quadrática - Teoria Completa', url: 'https://youtube.com/watch?v=exemplo1', duration: '45min' },
-                        { title: 'Geometria Plana - Exercícios', url: 'https://youtube.com/watch?v=exemplo2', duration: '30min' }
-                    ],
-                    pdfs: [
-                        { title: 'Resumo de Funções', url: '#', pages: 15 },
-                        { title: 'Exercícios de Geometria', url: '#', pages: 25 }
-                    ]
-                },
-                'Linguagens': {
-                    topics: ['Gramática', 'Literatura', 'Interpretação de Texto', 'Redação'],
-                    videos: [
-                        { title: 'Análise Sintática Completa', url: 'https://youtube.com/watch?v=exemplo3', duration: '60min' },
-                        { title: 'Literatura Brasileira - Romantismo', url: 'https://youtube.com/watch?v=exemplo4', duration: '40min' }
-                    ],
-                    pdfs: [
-                        { title: 'Guia de Redação ENEM', url: '#', pages: 30 },
-                        { title: 'Resumo de Literatura', url: '#', pages: 20 }
-                    ]
-                }
-            }
-        };
-
-        // Question Bank
-        const questionBankDB = {
-            'enem': {
-                'Matemática': [
-                    {
-                        question: "Uma função quadrática f(x) = ax² + bx + c tem vértice no ponto (2, -1) e passa pelo ponto (0, 3). Qual o valor de a?",
-                        options: ["a) 1", "b) 2", "c) -1", "d) -2", "e) 3"],
-                        correct: 0,
-                        explanation: "Usando as condições dadas: vértice (2, -1) e ponto (0, 3), podemos determinar que a = 1."
-                    },
-                    {
-                        question: "Em um triângulo retângulo, os catetos medem 3 cm e 4 cm. Qual a medida da hipotenusa?",
-                        options: ["a) 5 cm", "b) 6 cm", "c) 7 cm", "d) 8 cm", "e) 9 cm"],
-                        correct: 0,
-                        explanation: "Pelo teorema de Pitágoras: h² = 3² + 4² = 9 + 16 = 25, logo h = 5 cm."
-                    }
-                ],
-                'Linguagens': [
-                    {
-                        question: "Qual figura de linguagem está presente na frase: 'O vento sussurrava segredos'?",
-                        options: ["a) Metáfora", "b) Personificação", "c) Hipérbole", "d) Ironia", "e) Antítese"],
-                        correct: 1,
-                        explanation: "Personificação: atribuição de características humanas (sussurrar segredos) a seres inanimados (vento)."
-                    }
-                ]
-            }
+        let userProfile = null;
+        let geminiApiKey = null;
+        let geminiConfig = {
+            model: 'gemini-pro',
+            temperature: 0.7
         };
 
         // Initialize App
@@ -587,6 +751,18 @@
                 document.getElementById('loadingScreen').style.display = 'none';
                 checkAuthState();
             }, 2000);
+
+            // Load Gemini config
+            loadGeminiConfig();
+            
+            // Setup temperature slider
+            const tempSlider = document.getElementById('geminiTemperature');
+            const tempValue = document.getElementById('temperatureValue');
+            if (tempSlider && tempValue) {
+                tempSlider.addEventListener('input', function() {
+                    tempValue.textContent = this.value;
+                });
+            }
         });
 
         // Auth State Observer
@@ -634,6 +810,8 @@
             document.getElementById('studentDashboard').style.display = 'block';
             document.getElementById('studentName').textContent = userData.name;
             loadStudentData(userData);
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
         }
 
         // Login Form Handler
@@ -656,6 +834,20 @@
         }
 
         // Admin Functions
+        function showAdminSection(section) {
+            document.querySelectorAll('.admin-section').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.getElementById('admin' + section.charAt(0).toUpperCase() + section.slice(1) + 'Section').style.display = 'block';
+
+            document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            event.target.classList.remove('border-transparent', 'text-gray-500');
+            event.target.classList.add('border-blue-500', 'text-blue-600');
+        }
+
         async function loadAdminData() {
             try {
                 const usersSnapshot = await db.collection('users').get();
@@ -686,6 +878,7 @@
             tbody.innerHTML = '';
 
             users.forEach(user => {
+                const progress = user.studyProgress || 0;
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.name}</td>
@@ -699,6 +892,12 @@
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
                             ${user.active ? 'Ativo' : 'Inativo'}
                         </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                        </div>
+                        <span class="text-xs text-gray-500">${progress}%</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button onclick="toggleUserStatus('${user.id}', ${!user.active})" class="text-indigo-600 hover:text-indigo-900 mr-3">
@@ -743,7 +942,11 @@
                     expiryDate: expiryDate,
                     active: true,
                     isAdmin: false,
-                    createdDate: new Date().toISOString().split('T')[0]
+                    createdDate: new Date().toISOString().split('T')[0],
+                    studyProgress: 0,
+                    studyHours: 0,
+                    questionsAnswered: 0,
+                    accuracyRate: 0
                 });
 
                 hideAddUserModal();
@@ -776,172 +979,289 @@
             }
         }
 
-        // Student Functions
-        function loadStudentData(userData) {
-            // Load contest configuration if exists
-            if (userData.contest && userData.area) {
-                currentContest = userData.contest;
-                currentArea = userData.area;
-                document.getElementById('contestSelect').value = currentContest;
-                updateAreaOptions();
-                document.getElementById('areaSelect').value = currentArea;
-                loadStudyPlan();
-                loadMaterials();
-                loadSimulations();
+        // Gemini Configuration
+        async function loadGeminiConfig() {
+            try {
+                const configDoc = await db.collection('config').doc('gemini').get();
+                if (configDoc.exists) {
+                    const config = configDoc.data();
+                    geminiApiKey = config.apiKey;
+                    geminiConfig = { ...geminiConfig, ...config };
+                    
+                    if (geminiApiKey) {
+                        updateAIStatus(true);
+                        document.getElementById('geminiApiKey').value = '••••••••••••••••';
+                        document.getElementById('geminiModel').value = geminiConfig.model;
+                        document.getElementById('geminiTemperature').value = geminiConfig.temperature;
+                        document.getElementById('temperatureValue').textContent = geminiConfig.temperature;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading Gemini config:', error);
             }
-
-            // Load stats
-            document.getElementById('studyHours').textContent = userData.studyHours || '0h';
-            document.getElementById('questionsAnswered').textContent = userData.questionsAnswered || '0';
-            document.getElementById('accuracyRate').textContent = (userData.accuracyRate || 0) + '%';
-            document.getElementById('userRanking').textContent = '#' + (userData.ranking || 'N/A');
         }
 
+        document.getElementById('geminiConfigForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const apiKey = document.getElementById('geminiApiKey').value;
+            const model = document.getElementById('geminiModel').value;
+            const temperature = parseFloat(document.getElementById('geminiTemperature').value);
+
+            if (apiKey && apiKey !== '••••••••••••••••') {
+                geminiApiKey = apiKey;
+            }
+            
+            geminiConfig = { model, temperature };
+
+            try {
+                await db.collection('config').doc('gemini').set({
+                    apiKey: geminiApiKey,
+                    model: model,
+                    temperature: temperature,
+                    updatedAt: new Date()
+                });
+
+                showGeminiStatus('Configuração salva com sucesso!', 'success');
+                updateAIStatus(true);
+            } catch (error) {
+                showGeminiStatus('Erro ao salvar configuração: ' + error.message, 'error');
+            }
+        });
+
+        async function testGeminiConnection() {
+            if (!geminiApiKey) {
+                showGeminiStatus('Configure a chave da API primeiro', 'error');
+                return;
+            }
+
+            showGeminiStatus('Testando conexão...', 'info');
+
+            try {
+                const response = await callGeminiAPI('Olá, você está funcionando?');
+                showGeminiStatus('Conexão bem-sucedida! IA respondeu: ' + response.substring(0, 100) + '...', 'success');
+                updateAIStatus(true);
+            } catch (error) {
+                showGeminiStatus('Erro na conexão: ' + error.message, 'error');
+                updateAIStatus(false);
+            }
+        }
+
+        function showGeminiStatus(message, type) {
+            const statusDiv = document.getElementById('geminiStatus');
+            statusDiv.className = `mt-6 p-4 rounded-lg ${
+                type === 'success' ? 'bg-green-100 border border-green-400 text-green-700' :
+                type === 'error' ? 'bg-red-100 border border-red-400 text-red-700' :
+                'bg-blue-100 border border-blue-400 text-blue-700'
+            }`;
+            statusDiv.textContent = message;
+            statusDiv.classList.remove('hidden');
+        }
+
+        function updateAIStatus(connected) {
+            const statusDiv = document.getElementById('aiStatus');
+            const chatInput = document.getElementById('chatInput');
+            const chatButton = document.querySelector('#studentChatSection button[onclick="sendMessage()"]');
+            
+            if (connected) {
+                statusDiv.innerHTML = '<i class="fas fa-circle text-green-500 mr-2"></i><span>IA Conectada</span>';
+                statusDiv.className = 'flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm';
+                if (chatInput) chatInput.disabled = false;
+                if (chatButton) chatButton.disabled = false;
+            } else {
+                statusDiv.innerHTML = '<i class="fas fa-circle text-red-500 mr-2"></i><span>IA Desconectada</span>';
+                statusDiv.className = 'flex items-center px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm';
+                if (chatInput) chatInput.disabled = true;
+                if (chatButton) chatButton.disabled = true;
+            }
+        }
+
+        // Student Functions
         function showStudentSection(section) {
-            // Hide all sections
             document.querySelectorAll('.student-section').forEach(el => {
                 el.style.display = 'none';
             });
-
-            // Show selected section
             document.getElementById('student' + section.charAt(0).toUpperCase() + section.slice(1) + 'Section').style.display = 'block';
 
-            // Update navigation
             document.querySelectorAll('.student-nav-btn').forEach(btn => {
                 btn.classList.remove('border-blue-500', 'text-blue-600');
                 btn.classList.add('border-transparent', 'text-gray-500');
             });
-
             event.target.classList.remove('border-transparent', 'text-gray-500');
             event.target.classList.add('border-blue-500', 'text-blue-600');
         }
 
-        // Contest Configuration
-        document.getElementById('contestSelect').addEventListener('change', updateAreaOptions);
+        async function loadStudentData(userData) {
+            userProfile = userData.profile || {};
+            
+            // Load stats
+            document.getElementById('studyHours').textContent = (userData.studyHours || 0) + 'h';
+            document.getElementById('questionsAnswered').textContent = userData.questionsAnswered || '0';
+            document.getElementById('accuracyRate').textContent = (userData.accuracyRate || 0) + '%';
+            document.getElementById('userRanking').textContent = '#' + (userData.ranking || 'N/A');
 
-        function updateAreaOptions() {
-            const contest = document.getElementById('contestSelect').value;
-            const areaSelect = document.getElementById('areaSelect');
-            
-            areaSelect.innerHTML = '<option value="">Selecione uma área</option>';
-            
-            if (contest && contestAreas[contest]) {
-                contestAreas[contest].forEach(area => {
-                    const option = document.createElement('option');
-                    option.value = area;
-                    option.textContent = area;
-                    areaSelect.appendChild(option);
-                });
+            // Update progress ring
+            const progress = userData.studyProgress || 0;
+            updateProgressRing(progress);
+
+            // Load profile if exists
+            if (userProfile.fullName) {
+                loadProfileData();
+                generateStudyPlan();
+                loadMaterials();
+                loadSimulations();
+                loadProgressData();
             }
         }
 
-        async function saveContestConfig() {
-            const contest = document.getElementById('contestSelect').value;
-            const area = document.getElementById('areaSelect').value;
+        function updateProgressRing(percentage) {
+            const circle = document.getElementById('progressCircle');
+            const percentageText = document.getElementById('progressPercentage');
+            
+            const circumference = 2 * Math.PI * 40;
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            circle.style.strokeDashoffset = offset;
+            percentageText.textContent = percentage + '%';
+        }
 
-            if (!contest || !area) {
-                alert('Por favor, selecione o concurso e a área');
+        function updateCountdown() {
+            if (!userProfile.examDate) {
+                document.getElementById('timeRemaining').textContent = 'Configure a data da prova';
                 return;
             }
 
+            const examDate = new Date(userProfile.examDate);
+            const now = new Date();
+            const timeDiff = examDate - now;
+
+            if (timeDiff <= 0) {
+                document.getElementById('timeRemaining').textContent = 'Prova realizada';
+                return;
+            }
+
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+
+            document.getElementById('timeRemaining').textContent = `${days}d ${hours}h ${minutes}m`;
+        }
+
+        // Profile Management
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const profileData = {
+                fullName: document.getElementById('fullName').value,
+                birthDate: document.getElementById('birthDate').value,
+                contestType: document.getElementById('contestType').value,
+                institution: document.getElementById('institution').value,
+                examDate: document.getElementById('examDate').value,
+                targetPosition: document.getElementById('targetPosition').value,
+                dailyHours: parseInt(document.getElementById('dailyHours').value),
+                studyTime: document.getElementById('studyTime').value,
+                currentLevel: document.getElementById('currentLevel').value,
+                subjects: Array.from(document.querySelectorAll('.subject-checkbox:checked')).map(cb => cb.value)
+            };
+
             try {
                 await db.collection('users').doc(currentUser.uid).update({
-                    contest: contest,
-                    area: area
+                    profile: profileData,
+                    updatedAt: new Date()
                 });
 
-                currentContest = contest;
-                currentArea = area;
-
-                loadStudyPlan();
+                userProfile = profileData;
+                alert('Perfil salvo com sucesso!');
+                
+                // Generate study plan and materials
+                generateStudyPlan();
                 loadMaterials();
                 loadSimulations();
+                loadProgressData();
                 
-                alert('Configuração salva com sucesso!');
+                // Switch to dashboard
+                showStudentSection('dashboard');
             } catch (error) {
-                alert('Erro ao salvar configuração');
+                alert('Erro ao salvar perfil: ' + error.message);
+            }
+        });
+
+        function loadProfileData() {
+            if (!userProfile) return;
+
+            document.getElementById('fullName').value = userProfile.fullName || '';
+            document.getElementById('birthDate').value = userProfile.birthDate || '';
+            document.getElementById('contestType').value = userProfile.contestType || '';
+            document.getElementById('institution').value = userProfile.institution || '';
+            document.getElementById('examDate').value = userProfile.examDate || '';
+            document.getElementById('targetPosition').value = userProfile.targetPosition || '';
+            document.getElementById('dailyHours').value = userProfile.dailyHours || '4';
+            document.getElementById('studyTime').value = userProfile.studyTime || 'manha';
+            document.getElementById('currentLevel').value = userProfile.currentLevel || 'intermediario';
+
+            // Load selected subjects
+            if (userProfile.subjects) {
+                userProfile.subjects.forEach(subject => {
+                    const checkbox = document.querySelector(`.subject-checkbox[value="${subject}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
             }
         }
 
-        function loadStudyPlan() {
-            if (!currentContest || !currentArea) return;
+        function resetProfile() {
+            document.getElementById('profileForm').reset();
+            document.querySelectorAll('.subject-checkbox').forEach(cb => cb.checked = false);
+        }
 
-            const studyPlanSection = document.getElementById('studyPlanSection');
+        function generateStudyPlan() {
+            if (!userProfile.subjects || userProfile.subjects.length === 0) return;
+
             const studyPlanContent = document.getElementById('studyPlanContent');
-            
-            studyPlanSection.style.display = 'block';
-            
-            const materials = studyMaterialsDB[currentContest]?.[currentArea];
-            if (materials) {
-                studyPlanContent.innerHTML = materials.topics.map(topic => `
-                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white card-hover">
-                        <h3 class="text-lg font-semibold mb-2">${topic}</h3>
-                        <p class="text-sm opacity-90 mb-4">Tópico essencial para ${currentArea}</p>
-                        <button onclick="studyTopic('${topic}')" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
-                            Estudar Agora
-                        </button>
-                    </div>
-                `).join('');
-            }
+            const dailyHours = userProfile.dailyHours || 4;
+            const hoursPerSubject = Math.floor(dailyHours / userProfile.subjects.length);
+
+            studyPlanContent.innerHTML = userProfile.subjects.map(subject => `
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white card-hover">
+                    <h3 class="text-lg font-semibold mb-2">${subject.charAt(0).toUpperCase() + subject.slice(1)}</h3>
+                    <p class="text-sm opacity-90 mb-2">${hoursPerSubject}h por dia</p>
+                    <p class="text-sm opacity-90 mb-4">Nível: ${userProfile.currentLevel}</p>
+                    <button onclick="studySubject('${subject}')" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition duration-300">
+                        Estudar Agora
+                    </button>
+                </div>
+            `).join('');
         }
 
         function loadMaterials() {
-            if (!currentContest || !currentArea) return;
+            if (!userProfile.subjects) return;
 
             const materialsContent = document.getElementById('materialsContent');
-            const materials = studyMaterialsDB[currentContest]?.[currentArea];
-
-            if (materials) {
-                materialsContent.innerHTML = `
-                    <div class="study-material rounded-lg p-6 card-hover">
-                        <div class="text-center mb-4">
-                            <i class="fas fa-video text-4xl text-red-600 mb-2"></i>
-                            <h3 class="text-lg font-semibold">Videoaulas</h3>
-                            <p class="text-gray-600 text-sm">${materials.videos.length} vídeos disponíveis</p>
-                        </div>
-                        <div class="space-y-2">
-                            ${materials.videos.map(video => `
-                                <div class="flex justify-between items-center p-2 bg-white rounded border">
-                                    <span class="text-sm">${video.title}</span>
-                                    <span class="text-xs text-gray-500">${video.duration}</span>
-                                </div>
-                            `).join('')}
-                        </div>
+            materialsContent.innerHTML = userProfile.subjects.map(subject => `
+                <div class="study-material rounded-lg p-6 card-hover">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-book text-4xl text-blue-600 mb-2"></i>
+                        <h3 class="text-lg font-semibold">${subject.charAt(0).toUpperCase() + subject.slice(1)}</h3>
+                        <p class="text-gray-600 text-sm">Material personalizado</p>
                     </div>
-                    <div class="study-material rounded-lg p-6 card-hover">
-                        <div class="text-center mb-4">
-                            <i class="fas fa-file-pdf text-4xl text-red-600 mb-2"></i>
-                            <h3 class="text-lg font-semibold">Material PDF</h3>
-                            <p class="text-gray-600 text-sm">${materials.pdfs.length} arquivos disponíveis</p>
-                        </div>
-                        <div class="space-y-2">
-                            ${materials.pdfs.map(pdf => `
-                                <div class="flex justify-between items-center p-2 bg-white rounded border">
-                                    <span class="text-sm">${pdf.title}</span>
-                                    <span class="text-xs text-gray-500">${pdf.pages} páginas</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="study-material rounded-lg p-6 card-hover">
-                        <div class="text-center mb-4">
-                            <i class="fas fa-robot text-4xl text-blue-600 mb-2"></i>
-                            <h3 class="text-lg font-semibold">Exercícios Gemini</h3>
-                            <p class="text-gray-600 text-sm">Gerados pela inteligência artificial</p>
-                        </div>
-                        <button onclick="generateAIExercises()" class="w-full gemini-gradient text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
-                            Gerar Exercícios
+                    <div class="space-y-2">
+                        <button onclick="generateSubjectMaterial('${subject}')" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 py-2 px-4 rounded text-sm">
+                            📚 Resumos
+                        </button>
+                        <button onclick="generateSubjectExercises('${subject}')" class="w-full bg-green-100 hover:bg-green-200 text-green-800 py-2 px-4 rounded text-sm">
+                            📝 Exercícios
+                        </button>
+                        <button onclick="generateSubjectVideos('${subject}')" class="w-full bg-red-100 hover:bg-red-200 text-red-800 py-2 px-4 rounded text-sm">
+                            🎥 Videoaulas
                         </button>
                     </div>
-                `;
-            }
+                </div>
+            `).join('');
         }
 
         function loadSimulations() {
-            if (!currentContest || !currentArea) return;
+            if (!userProfile.contestType) return;
 
             const simulationsContent = document.getElementById('simulationsContent');
-            
             simulationsContent.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
@@ -949,6 +1269,7 @@
                             <i class="fas fa-clock text-3xl text-blue-600 mb-2"></i>
                             <h3 class="text-lg font-semibold">Simulado Rápido</h3>
                             <p class="text-gray-600 text-sm">10 questões - 15 minutos</p>
+                            <p class="text-gray-500 text-xs">${userProfile.contestType.toUpperCase()}</p>
                         </div>
                         <button onclick="startSimulation('quick')" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
                             Iniciar
@@ -959,6 +1280,7 @@
                             <i class="fas fa-clipboard-list text-3xl text-green-600 mb-2"></i>
                             <h3 class="text-lg font-semibold">Simulado Médio</h3>
                             <p class="text-gray-600 text-sm">25 questões - 45 minutos</p>
+                            <p class="text-gray-500 text-xs">${userProfile.contestType.toUpperCase()}</p>
                         </div>
                         <button onclick="startSimulation('medium')" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
                             Iniciar
@@ -969,280 +1291,149 @@
                             <i class="fas fa-trophy text-3xl text-yellow-600 mb-2"></i>
                             <h3 class="text-lg font-semibold">Simulado Completo</h3>
                             <p class="text-gray-600 text-sm">50 questões - 90 minutos</p>
+                            <p class="text-gray-500 text-xs">${userProfile.contestType.toUpperCase()}</p>
                         </div>
                         <button onclick="startSimulation('full')" class="w-full gradient-bg text-white py-2 rounded-lg hover:opacity-90 transition duration-300">
                             Iniciar
                         </button>
                     </div>
                 </div>
-            `;
-        }
-
-        // Simulation Functions
-        function startSimulation(type) {
-            if (!currentContest || !currentArea) {
-                alert('Configure seu concurso primeiro');
-                return;
-            }
-
-            const questions = questionBankDB[currentContest]?.[currentArea] || [];
-            if (questions.length === 0) {
-                alert('Nenhuma questão disponível para esta área');
-                return;
-            }
-
-            let questionCount;
-            let timeLimit;
-            
-            switch(type) {
-                case 'quick':
-                    questionCount = Math.min(10, questions.length);
-                    timeLimit = 15;
-                    break;
-                case 'medium':
-                    questionCount = Math.min(25, questions.length);
-                    timeLimit = 45;
-                    break;
-                case 'full':
-                    questionCount = Math.min(50, questions.length);
-                    timeLimit = 90;
-                    break;
-            }
-
-            const selectedQuestions = questions.slice(0, questionCount);
-            showSimulationModal(selectedQuestions, timeLimit);
-        }
-
-        function showSimulationModal(questions, timeLimit) {
-            const modal = document.getElementById('simulationModal');
-            const title = document.getElementById('simulationTitle');
-            const content = document.getElementById('simulationContent');
-
-            title.textContent = `Simulado - ${currentArea} (${questions.length} questões)`;
-            
-            let currentQuestion = 0;
-            let answers = [];
-            let timeRemaining = timeLimit * 60; // Convert to seconds
-
-            function renderQuestion() {
-                const question = questions[currentQuestion];
-                content.innerHTML = `
-                    <div class="mb-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-sm text-gray-600">Questão ${currentQuestion + 1} de ${questions.length}</span>
-                            <span id="timer" class="text-sm font-semibold text-red-600">${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
-                            <div class="bg-blue-600 h-2 rounded-full progress-bar" style="width: ${((currentQuestion + 1) / questions.length) * 100}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="question-card bg-gray-50 rounded-lg p-6 mb-6">
-                        <h3 class="text-lg font-semibold mb-4">${question.question}</h3>
-                        <div class="space-y-3">
-                            ${question.options.map((option, index) => `
-                                <label class="flex items-center p-3 bg-white rounded-lg border hover:bg-gray-50 cursor-pointer">
-                                    <input type="radio" name="answer" value="${index}" class="mr-3">
-                                    <span>${option}</span>
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-between">
-                        <button onclick="previousQuestion()" ${currentQuestion === 0 ? 'disabled' : ''} 
-                                class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50">
-                            Anterior
-                        </button>
-                        <button onclick="${currentQuestion === questions.length - 1 ? 'finishSimulation()' : 'nextQuestion()'}" 
-                                class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90">
-                            ${currentQuestion === questions.length - 1 ? 'Finalizar' : 'Próxima'}
-                        </button>
-                    </div>
-                `;
-            }
-
-            window.nextQuestion = function() {
-                const selectedAnswer = document.querySelector('input[name="answer"]:checked');
-                if (selectedAnswer) {
-                    answers[currentQuestion] = parseInt(selectedAnswer.value);
-                    currentQuestion++;
-                    renderQuestion();
-                } else {
-                    alert('Por favor, selecione uma resposta');
-                }
-            };
-
-            window.previousQuestion = function() {
-                if (currentQuestion > 0) {
-                    currentQuestion--;
-                    renderQuestion();
-                }
-            };
-
-            window.finishSimulation = function() {
-                const selectedAnswer = document.querySelector('input[name="answer"]:checked');
-                if (selectedAnswer) {
-                    answers[currentQuestion] = parseInt(selectedAnswer.value);
-                }
-                showSimulationResults(questions, answers);
-            };
-
-            // Timer
-            const timerInterval = setInterval(() => {
-                timeRemaining--;
-                const timerElement = document.getElementById('timer');
-                if (timerElement) {
-                    timerElement.textContent = `${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}`;
-                }
                 
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    alert('Tempo esgotado!');
-                    showSimulationResults(questions, answers);
-                }
-            }, 1000);
-
-            renderQuestion();
-            modal.style.display = 'flex';
-        }
-
-        function showSimulationResults(questions, answers) {
-            let correct = 0;
-            const results = questions.map((question, index) => {
-                const isCorrect = answers[index] === question.correct;
-                if (isCorrect) correct++;
-                return { question, userAnswer: answers[index], isCorrect };
-            });
-
-            const percentage = Math.round((correct / questions.length) * 100);
-            
-            const content = document.getElementById('simulationContent');
-            content.innerHTML = `
-                <div class="text-center mb-8">
-                    <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center ${percentage >= 70 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
-                        <i class="fas ${percentage >= 70 ? 'fa-check' : 'fa-times'} text-3xl"></i>
-                    </div>
-                    <h2 class="text-3xl font-bold mb-2">${percentage}%</h2>
-                    <p class="text-gray-600">Você acertou ${correct} de ${questions.length} questões</p>
-                    <div class="mt-4">
-                        <span class="px-4 py-2 rounded-full text-sm font-semibold ${percentage >= 70 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                            ${percentage >= 70 ? 'Aprovado' : 'Precisa Melhorar'}
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="space-y-4 max-h-96 overflow-y-auto">
-                    ${results.map((result, index) => `
-                        <div class="question-card ${result.isCorrect ? 'correct' : 'incorrect'} p-4 rounded-lg">
-                            <h4 class="font-semibold mb-2">Questão ${index + 1}</h4>
-                            <p class="text-sm text-gray-700 mb-2">${result.question.question}</p>
-                            <p class="text-sm">
-                                <strong>Sua resposta:</strong> ${result.question.options[result.userAnswer] || 'Não respondida'}
-                            </p>
-                            <p class="text-sm">
-                                <strong>Resposta correta:</strong> ${result.question.options[result.question.correct]}
-                            </p>
-                            ${result.question.explanation ? `<p class="text-sm text-gray-600 mt-2"><strong>Explicação:</strong> ${result.question.explanation}</p>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div class="flex justify-center mt-8">
-                    <button onclick="closeSimulation()" class="gradient-bg text-white px-8 py-3 rounded-lg hover:opacity-90">
-                        Fechar
+                <div class="mt-8 text-center">
+                    <button onclick="generateAISimulation()" class="gemini-gradient text-white px-8 py-3 rounded-lg hover:opacity-90 transition duration-300">
+                        <i class="fas fa-robot mr-2"></i>Criar Simulado Personalizado com IA
                     </button>
                 </div>
             `;
-
-            // Save results to user profile
-            saveSimulationResult(correct, questions.length, percentage);
         }
 
-        async function saveSimulationResult(correct, total, percentage) {
-            try {
-                const userRef = db.collection('users').doc(currentUser.uid);
-                const userDoc = await userRef.get();
-                const userData = userDoc.data();
+        function loadProgressData() {
+            if (!userProfile.subjects) return;
 
-                const newQuestionsAnswered = (userData.questionsAnswered || 0) + total;
-                const newAccuracyRate = Math.round(((userData.accuracyRate || 0) * (userData.questionsAnswered || 0) + percentage * total) / newQuestionsAnswered);
+            // Subject Progress
+            const subjectProgress = document.getElementById('subjectProgress');
+            subjectProgress.innerHTML = userProfile.subjects.map(subject => {
+                const progress = Math.floor(Math.random() * 100); // Simulated progress
+                return `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-book text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">${subject.charAt(0).toUpperCase() + subject.slice(1)}</h4>
+                                <p class="text-sm text-gray-600">${progress}% concluído</p>
+                            </div>
+                        </div>
+                        <div class="w-24">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
 
-                await userRef.update({
-                    questionsAnswered: newQuestionsAnswered,
-                    accuracyRate: newAccuracyRate,
-                    lastSimulation: new Date().toISOString()
-                });
+            // Study Calendar
+            generateStudyCalendar();
+        }
 
-                // Update display
-                document.getElementById('questionsAnswered').textContent = newQuestionsAnswered;
-                document.getElementById('accuracyRate').textContent = newAccuracyRate + '%';
-            } catch (error) {
-                console.error('Error saving simulation result:', error);
+        function generateStudyCalendar() {
+            const calendar = document.getElementById('studyCalendar');
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            // Days of week header
+            const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            calendar.innerHTML = daysOfWeek.map(day => 
+                `<div class="text-center font-semibold text-gray-600 p-2">${day}</div>`
+            ).join('');
+
+            // Calendar days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            // Empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                calendar.innerHTML += '<div class="p-2"></div>';
+            }
+
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = day === today.getDate();
+                const hasStudy = Math.random() > 0.7; // Simulated study days
+                
+                calendar.innerHTML += `
+                    <div class="p-2 text-center cursor-pointer hover:bg-gray-100 rounded ${
+                        isToday ? 'bg-blue-100 text-blue-800 font-bold' : ''
+                    }">
+                        <div class="text-sm">${day}</div>
+                        ${hasStudy ? '<div class="w-2 h-2 bg-green-500 rounded-full mx-auto mt-1"></div>' : ''}
+                    </div>
+                `;
             }
         }
 
-        function closeSimulation() {
-            document.getElementById('simulationModal').style.display = 'none';
+        // Gemini AI Functions
+        async function callGeminiAPI(message, context = '') {
+            if (!geminiApiKey) {
+                throw new Error('Chave da API não configurada');
+            }
+
+            const prompt = context ? `${context}\n\nPergunta: ${message}` : message;
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiConfig.model}:generateContent?key=${geminiApiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: geminiConfig.temperature,
+                        topK: 1,
+                        topP: 1,
+                        maxOutputTokens: 2048,
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro na API: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
         }
 
-        // Gemini AI Chat Functions
         async function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
             
-            if (!message) return;
+            if (!message || !geminiApiKey) return;
 
-            // Add user message to chat
             addMessageToChat(message, 'user');
             input.value = '';
-
-            // Show typing indicator
             addTypingIndicator();
 
             try {
-                // Call Gemini AI
-                const response = await callGeminiAI(message);
+                const context = `Você é um professor virtual especializado em ${userProfile.contestType || 'concursos'} para ${userProfile.targetPosition || 'estudantes'}. 
+                O aluno está estudando: ${userProfile.subjects ? userProfile.subjects.join(', ') : 'matérias gerais'}.
+                Nível do aluno: ${userProfile.currentLevel || 'intermediário'}.
+                Responda de forma didática, clara e motivadora.`;
+
+                const response = await callGeminiAPI(message, context);
                 removeTypingIndicator();
                 addMessageToChat(response, 'ai');
             } catch (error) {
                 removeTypingIndicator();
-                addMessageToChat('Desculpe, estou processando sua pergunta. Como uma demonstração, posso ajudar com explicações sobre ' + (currentArea || 'suas matérias') + '. Tente perguntar sobre conceitos específicos!', 'ai');
+                addMessageToChat('Desculpe, ocorreu um erro. Verifique se a API está configurada corretamente.', 'ai');
             }
-        }
-
-        async function callGeminiAI(message) {
-            // Simulated Gemini AI response for demonstration
-            // In a real implementation, you would call the actual Gemini API
-            
-            const contextPrompt = `Você é um professor virtual especializado em ${currentArea || 'educação'} para ${currentContest || 'concursos'}. 
-            Responda de forma didática, clara e motivadora. Se a pergunta for sobre uma matéria específica, forneça explicações detalhadas com exemplos.
-            
-            Pergunta do aluno: ${message}`;
-
-            // Simulated responses based on keywords
-            const responses = {
-                'matemática': 'Ótima pergunta sobre matemática! 📊 Vou explicar de forma simples: A matemática é fundamental para o ENEM. Precisa de ajuda com algum tópico específico como funções, geometria ou estatística?',
-                'português': 'Português é uma matéria muito importante! 📚 Posso ajudar com gramática, literatura, interpretação de texto ou redação. Qual área você gostaria de focar?',
-                'física': 'Física pode parecer complexa, mas vou simplificar! ⚡ Sobre qual tópico você tem dúvidas? Mecânica, eletricidade, ondas ou termologia?',
-                'química': 'Química é fascinante! 🧪 Posso explicar desde conceitos básicos até reações mais complexas. Qual assunto você quer estudar?',
-                'biologia': 'Biologia é o estudo da vida! 🌱 Posso ajudar com citologia, genética, ecologia ou evolução. O que você gostaria de aprender?',
-                'história': 'História nos ensina sobre o passado! 📜 Posso explicar períodos históricos, eventos importantes ou processos sociais. Qual época te interessa?',
-                'geografia': 'Geografia conecta o mundo! 🌍 Posso ajudar com geografia física, humana, geopolítica ou cartografia. Sobre o que você quer saber?',
-                'exercício': 'Vou criar exercícios personalizados para você! 💪 Com base no seu nível e área de estudo, posso gerar questões que vão te ajudar a praticar.',
-                'dúvida': 'Estou aqui para esclarecer suas dúvidas! 🤔 Pode perguntar sobre qualquer matéria ou conceito que eu explico de forma clara e didática.',
-                'default': `Entendi sua pergunta sobre "${message}"! 🤖 Como seu professor virtual, vou te ajudar da melhor forma. ${currentArea ? `Focando em ${currentArea}` : 'Sobre qual matéria específica você gostaria de saber mais?'}`
-            };
-
-            // Find matching response
-            const lowerMessage = message.toLowerCase();
-            for (const [keyword, response] of Object.entries(responses)) {
-                if (lowerMessage.includes(keyword)) {
-                    return response;
-                }
-            }
-
-            return responses.default;
         }
 
         function addMessageToChat(message, sender) {
@@ -1304,112 +1495,135 @@
             }
         }
 
-        // AI Exercise Generation
-        async function generateAIExercises() {
-            if (!currentArea) {
-                alert('Configure seu concurso primeiro');
+        // AI Content Generation
+        async function generateAIMaterials() {
+            if (!geminiApiKey) {
+                alert('Configure a API do Gemini no painel administrativo primeiro');
+                return;
+            }
+
+            if (!userProfile.subjects) {
+                alert('Configure seu perfil primeiro');
                 return;
             }
 
             try {
-                // Simulated AI-generated exercises
-                const exercises = generateSimulatedExercises(currentArea, currentContest);
+                const prompt = `Crie um plano de estudos detalhado para ${userProfile.contestType} nas matérias: ${userProfile.subjects.join(', ')}. 
+                Nível: ${userProfile.currentLevel}. 
+                Tempo disponível: ${userProfile.dailyHours}h por dia.
+                Inclua tópicos importantes, cronograma e dicas de estudo.`;
+
+                const response = await callGeminiAPI(prompt);
                 
-                // Display generated exercises
-                const modal = document.getElementById('simulationModal');
-                const title = document.getElementById('simulationTitle');
-                const content = document.getElementById('simulationContent');
-
-                title.textContent = `Exercícios Gerados por Gemini AI - ${currentArea}`;
-                content.innerHTML = `
-                    <div class="gemini-gradient rounded-lg p-4 mb-6 text-white">
-                        <div class="flex items-center">
-                            <i class="fas fa-robot text-xl mr-3"></i>
-                            <div>
-                                <h3 class="font-semibold">Exercícios Personalizados</h3>
-                                <p class="text-sm opacity-90">Gerados especialmente para você pelo Gemini AI</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg p-6 border">
-                        <div class="space-y-6">
-                            ${exercises.map((exercise, index) => `
-                                <div class="border-l-4 border-blue-500 pl-4">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Questão ${index + 1}</h4>
-                                    <p class="text-gray-700 mb-3">${exercise.question}</p>
-                                    <div class="space-y-1 mb-3">
-                                        ${exercise.options.map(option => `
-                                            <p class="text-sm text-gray-600">${option}</p>
-                                        `).join('')}
-                                    </div>
-                                    <div class="bg-green-50 border border-green-200 rounded p-2">
-                                        <p class="text-sm text-green-800"><strong>Resposta:</strong> ${exercise.answer}</p>
-                                        <p class="text-sm text-green-700">${exercise.explanation}</p>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="flex justify-center mt-6">
-                        <button onclick="closeSimulation()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 mr-3">
-                            Fechar
-                        </button>
-                        <button onclick="generateAIExercises()" class="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50">
-                            Gerar Novos
-                        </button>
-                    </div>
-                `;
-
-                modal.style.display = 'flex';
+                // Show generated content in modal
+                showGeneratedContent('Materiais Gerados pela IA', response);
             } catch (error) {
-                alert('Erro ao gerar exercícios. Tente novamente.');
+                alert('Erro ao gerar materiais: ' + error.message);
             }
         }
 
-        function generateSimulatedExercises(area, contest) {
-            // Simulated exercise generation based on area and contest
-            const exerciseTemplates = {
-                'Matemática': [
-                    {
-                        question: "Se f(x) = 2x + 3, qual o valor de f(5)?",
-                        options: ["a) 10", "b) 13", "c) 15", "d) 8", "e) 11"],
-                        answer: "b) 13",
-                        explanation: "Substituindo x = 5 na função: f(5) = 2(5) + 3 = 10 + 3 = 13"
-                    },
-                    {
-                        question: "Qual é a área de um círculo com raio 4 cm? (Use π = 3,14)",
-                        options: ["a) 50,24 cm²", "b) 25,12 cm²", "c) 12,56 cm²", "d) 100,48 cm²", "e) 6,28 cm²"],
-                        answer: "a) 50,24 cm²",
-                        explanation: "Área = π × r² = 3,14 × 4² = 3,14 × 16 = 50,24 cm²"
-                    }
-                ],
-                'Linguagens': [
-                    {
-                        question: "Qual figura de linguagem está presente em 'Seus olhos são estrelas'?",
-                        options: ["a) Metáfora", "b) Metonímia", "c) Hipérbole", "d) Ironia", "e) Antítese"],
-                        answer: "a) Metáfora",
-                        explanation: "Metáfora é uma comparação implícita, onde os olhos são comparados a estrelas sem usar conectivos."
-                    }
-                ],
-                'default': [
-                    {
-                        question: `Questão sobre ${area} para ${contest}`,
-                        options: ["a) Opção A", "b) Opção B", "c) Opção C", "d) Opção D", "e) Opção E"],
-                        answer: "a) Opção A",
-                        explanation: `Esta é uma explicação detalhada sobre o conceito de ${area}.`
-                    }
-                ]
-            };
+        async function generateAISimulation() {
+            if (!geminiApiKey) {
+                alert('Configure a API do Gemini no painel administrativo primeiro');
+                return;
+            }
 
-            const templates = exerciseTemplates[area] || exerciseTemplates['default'];
-            return templates.slice(0, 3); // Return 3 exercises
+            if (!userProfile.subjects) {
+                alert('Configure seu perfil primeiro');
+                return;
+            }
+
+            try {
+                const prompt = `Crie 10 questões de múltipla escolha para ${userProfile.contestType} sobre ${userProfile.subjects.join(', ')}.
+                Nível: ${userProfile.currentLevel}.
+                Formato: Para cada questão, inclua:
+                1. Enunciado da questão
+                2. 5 alternativas (a, b, c, d, e)
+                3. Resposta correta
+                4. Explicação detalhada
+                
+                Torne as questões desafiadoras mas adequadas ao nível do estudante.`;
+
+                const response = await callGeminiAPI(prompt);
+                showGeneratedContent('Simulado Gerado pela IA', response);
+            } catch (error) {
+                alert('Erro ao gerar simulado: ' + error.message);
+            }
         }
 
-        function studyTopic(topic) {
-            alert(`Iniciando estudo do tópico: ${topic}\n\nEm breve você terá acesso a conteúdo personalizado sobre este tópico gerado pelo Gemini AI!`);
+        function showGeneratedContent(title, content) {
+            const modal = document.getElementById('simulationModal');
+            const titleElement = document.getElementById('simulationTitle');
+            const contentElement = document.getElementById('simulationContent');
+
+            titleElement.textContent = title;
+            contentElement.innerHTML = `
+                <div class="gemini-gradient rounded-lg p-4 mb-6 text-white">
+                    <div class="flex items-center">
+                        <i class="fas fa-robot text-xl mr-3"></i>
+                        <div>
+                            <h3 class="font-semibold">Conteúdo Gerado por IA</h3>
+                            <p class="text-sm opacity-90">Criado especialmente para você pelo Gemini AI</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-6 border max-h-96 overflow-y-auto">
+                    <pre class="whitespace-pre-wrap text-sm text-gray-800">${content}</pre>
+                </div>
+                <div class="flex justify-center mt-6">
+                    <button onclick="closeSimulation()" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 mr-3">
+                        Fechar
+                    </button>
+                    <button onclick="saveGeneratedContent('${title}', \`${content.replace(/`/g, '\\`')}\`)" class="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50">
+                        Salvar Conteúdo
+                    </button>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        async function saveGeneratedContent(title, content) {
+            try {
+                await db.collection('generated_content').add({
+                    userId: currentUser.uid,
+                    title: title,
+                    content: content,
+                    createdAt: new Date()
+                });
+                alert('Conteúdo salvo com sucesso!');
+                closeSimulation();
+            } catch (error) {
+                alert('Erro ao salvar conteúdo: ' + error.message);
+            }
+        }
+
+        // Utility Functions
+        function studySubject(subject) {
+            alert(`Iniciando estudo de ${subject}!\n\nEm breve você terá acesso a conteúdo personalizado gerado pela IA.`);
+        }
+
+        function generateSubjectMaterial(subject) {
+            alert(`Gerando resumos de ${subject} com IA...\n\nFuncionalidade em desenvolvimento.`);
+        }
+
+        function generateSubjectExercises(subject) {
+            alert(`Criando exercícios de ${subject} com IA...\n\nFuncionalidade em desenvolvimento.`);
+        }
+
+        function generateSubjectVideos(subject) {
+            alert(`Buscando videoaulas de ${subject}...\n\nFuncionalidade em desenvolvimento.`);
+        }
+
+        function startSimulation(type) {
+            alert(`Iniciando simulado ${type}...\n\nFuncionalidade em desenvolvimento.`);
+        }
+
+        function closeSimulation() {
+            document.getElementById('simulationModal').style.display = 'none';
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cd0a7f62cc0309',t:'MTc1NDgwMzE5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cd3307a7b85f30',t:'MTc1NDgwNDg1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
 
