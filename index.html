@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concurso Turbo IA - Preparação Inteligente para Concursos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .progress-bar { transition: width 0.5s ease; }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .typing-animation::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-3xl">🎯</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Concurso Turbo IA</h1>
+                <p class="text-gray-600">Faça login para continuar</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email ou Usuário</label>
+                    <input type="text" id="loginUser" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Digite seu email ou usuário">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <input type="password" id="loginPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Digite sua senha">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all font-semibold">
+                    Entrar
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">Não tem uma conta? <button onclick="showAdminLogin()" class="text-purple-600 hover:text-purple-700 font-semibold">Área Administrativa</button></p>
+            </div>
+
+            <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-semibold text-blue-800 mb-2">🎉 Planos Disponíveis</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Mensal:</span>
+                        <span class="font-semibold text-blue-800">R$ 30,00/mês</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Anual:</span>
+                        <span class="font-semibold text-blue-800">R$ 199,00/ano</span>
+                    </div>
+                </div>
+                <p class="text-xs text-blue-600 mt-2">Entre em contato para adquirir sua assinatura!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Screen -->
+    <div id="adminLoginScreen" class="min-h-screen gradient-bg flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-r from-red-600 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-3xl">⚙️</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Painel Administrativo</h1>
+                <p class="text-gray-600">Acesso restrito</p>
+            </div>
+
+            <form id="adminLoginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuário Admin</label>
+                    <input type="text" id="adminUser" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="admin">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha Admin</label>
+                    <input type="password" id="adminPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="admin123">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white py-3 rounded-lg hover:from-red-700 hover:to-orange-700 transition-all font-semibold">
+                    Entrar como Admin
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <button onclick="showUserLogin()" class="text-purple-600 hover:text-purple-700 font-semibold text-sm">← Voltar ao Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="min-h-screen bg-gray-100 hidden">
+        <header class="bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-2xl">⚙️</span>
+                        <h1 class="text-2xl font-bold">Painel Administrativo</h1>
+                    </div>
+                    <button onclick="logout()" class="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-lg transition-colors">
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-6 py-8">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Usuários Ativos</p>
+                            <p class="text-2xl font-bold text-blue-600" id="activeUsers">0</p>
+                        </div>
+                        <span class="text-3xl">👥</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Receita Mensal</p>
+                            <p class="text-2xl font-bold text-green-600" id="monthlyRevenue">R$ 0</p>
+                        </div>
+                        <span class="text-3xl">💰</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Assinaturas Anuais</p>
+                            <p class="text-2xl font-bold text-purple-600" id="annualSubs">0</p>
+                        </div>
+                        <span class="text-3xl">📅</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Novos Hoje</p>
+                            <p class="text-2xl font-bold text-orange-600" id="newToday">0</p>
+                        </div>
+                        <span class="text-3xl">🆕</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create User Form -->
+            <div class="bg-white rounded-xl p-8 shadow-lg mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Criar Novo Usuário</h2>
+                <form id="createUserForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                        <input type="text" id="newUserName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="newUserEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Usuário</label>
+                        <input type="text" id="newUserUsername" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                        <input type="password" id="newUserPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Assinatura</label>
+                        <select id="newUserPlan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                            <option value="monthly">Mensal - R$ 30,00</option>
+                            <option value="annual">Anual - R$ 199,00</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Data de Vencimento</label>
+                        <input type="date" id="newUserExpiry" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                            Criar Usuário
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Users List -->
+            <div class="bg-white rounded-xl p-8 shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Usuários Cadastrados</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nome</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Plano</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Vencimento</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (existing content) -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                        <h1 class="text-2xl font-bold">Concurso Turbo IA</h1>
+                    </div>
+                    <nav class="hidden md:flex space-x-6">
+                        <button onclick="showSection('dashboard')" class="hover:text-yellow-300 transition-colors">Dashboard</button>
+                        <button onclick="showSection('perfil-concurso')" class="hover:text-yellow-300 transition-colors">Perfil do Concurso</button>
+                        <button onclick="showSection('diagnostico')" class="hover:text-yellow-300 transition-colors">Diagnóstico</button>
+                        <button onclick="showSection('simulados')" class="hover:text-yellow-300 transition-colors">Simulados</button>
+                        <button onclick="showSection('redacao')" class="hover:text-yellow-300 transition-colors">Redação</button>
+                        <button onclick="showSection('chat')" class="hover:text-yellow-300 transition-colors">Chat IA</button>
+                    </nav>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm">Olá, <span id="currentUserName" class="font-semibold">Usuário</span></span>
+                        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition-colors">
+                            Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Perfil do Concurso Section -->
+        <section id="perfil-concurso" class="section-content">
+            <div class="container mx-auto px-6 py-8">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Perfil do Concurso</h2>
+                    <p class="text-gray-600">Configure os dados do seu concurso para receber um plano de estudos personalizado</p>
+                </div>
+
+                <div class="bg-white rounded-xl p-8 shadow-lg">
+                    <form id="concursoForm" class="space-y-8">
+                        <!-- Informações Básicas -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">📋 Informações Básicas</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Concurso *</label>
+                                    <input type="text" id="nomeConcurso" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ex: Prefeitura de São Paulo - Professor" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nível de Escolaridade *</label>
+                                    <select id="nivelEscolaridade" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">Selecione o nível</option>
+                                        <option value="fundamental">Ensino Fundamental</option>
+                                        <option value="medio">Ensino Médio</option>
+                                        <option value="tecnico">Técnico</option>
+                                        <option value="superior">Ensino Superior</option>
+                                        <option value="pos-graduacao">Pós-graduação</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Área de Atuação *</label>
+                                    <select id="areaAtuacao" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">Selecione a área</option>
+                                        <option value="educacao">Educação</option>
+                                        <option value="saude">Saúde</option>
+                                        <option value="seguranca">Segurança Pública</option>
+                                        <option value="administrativa">Administrativa</option>
+                                        <option value="juridica">Jurídica</option>
+                                        <option value="fiscal">Fiscal/Tributária</option>
+                                        <option value="tecnologia">Tecnologia</option>
+                                        <option value="engenharia">Engenharia</option>
+                                        <option value="outras">Outras</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Local do Concurso *</label>
+                                    <input type="text" id="localConcurso" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ex: São Paulo/SP" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Data da Prova *</label>
+                                    <input type="date" id="dataProva" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tempo Disponível por Dia *</label>
+                                    <select id="tempoDisponivel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">Selecione o tempo</option>
+                                        <option value="1-2">1-2 horas por dia</option>
+                                        <option value="3-4">3-4 horas por dia</option>
+                                        <option value="5-6">5-6 horas por dia</option>
+                                        <option value="7-8">7-8 horas por dia</option>
+                                        <option value="8+">Mais de 8 horas por dia</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Conteúdo Programático -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">📚 Conteúdo Programático</h3>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Cole aqui o conteúdo programático do edital *</label>
+                                <textarea id="conteudoProgramatico" rows="10" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Cole aqui todo o conteúdo programático do edital do concurso..." required></textarea>
+                                <p class="text-sm text-gray-500 mt-2">💡 Dica: Cole o conteúdo completo do edital para uma análise mais precisa da IA</p>
+                            </div>
+                        </div>
+
+                        <!-- Informações Adicionais -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">ℹ️ Informações Adicionais</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Experiência com Concursos</label>
+                                    <select id="experienciaConcursos" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="nenhuma">Primeira vez</option>
+                                        <option value="pouca">Já fiz alguns concursos</option>
+                                        <option value="moderada">Tenho experiência moderada</option>
+                                        <option value="muita">Sou experiente em concursos</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Maior Dificuldade</label>
+                                    <select id="maiorDificuldade" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="portugues">Português</option>
+                                        <option value="matematica">Matemática</option>
+                                        <option value="direito">Direito</option>
+                                        <option value="conhecimentos-especificos">Conhecimentos Específicos</option>
+                                        <option value="redacao">Redação</option>
+                                        <option value="atualidades">Atualidades</option>
+                                        <option value="tempo">Gestão do tempo</option>
+                                        <option value="ansiedade">Controle da ansiedade</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-semibold text-lg">
+                                🤖 Gerar Plano de Estudos com IA
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Análise da IA -->
+                <div id="analiseIA" class="bg-white rounded-xl p-8 shadow-lg mt-8 hidden">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-4xl">🤖</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Análise Inteligente Concluída!</h3>
+                        <p class="text-gray-600">A IA analisou todos os dados e criou seu plano personalizado</p>
+                    </div>
+
+                    <!-- Análise do Local -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-blue-800 mb-4">🌍 Análise do Local</h4>
+                            <div id="analiseLocal" class="space-y-3 text-sm">
+                                <!-- Será preenchido pela IA -->
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-green-800 mb-4">📊 Estatísticas do Concurso</h4>
+                            <div id="estatisticasConcurso" class="space-y-3 text-sm">
+                                <!-- Será preenchido pela IA -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cronograma Inteligente -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg mb-8">
+                        <h4 class="text-lg font-semibold text-purple-800 mb-4">📅 Cronograma Inteligente</h4>
+                        <div id="cronogramaInteligente" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Será preenchido pela IA -->
+                        </div>
+                    </div>
+
+                    <!-- Temas Prováveis para Redação -->
+                    <div class="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-lg mb-8">
+                        <h4 class="text-lg font-semibold text-orange-800 mb-4">✍️ Temas Prováveis para Redação</h4>
+                        <div id="temasRedacao" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Será preenchido pela IA -->
+                        </div>
+                    </div>
+
+                    <!-- Alertas e Recomendações -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg">
+                        <h4 class="text-lg font-semibold text-yellow-800 mb-4">⚠️ Alertas e Recomendações</h4>
+                        <div id="alertasRecomendacoes" class="space-y-3">
+                            <!-- Será preenchido pela IA -->
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-8">
+                        <button onclick="salvarPerfilConcurso()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                            Salvar Perfil e Começar Estudos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section (existing content) -->
+        <section id="dashboard" class="section-content hidden">
+            <div class="container mx-auto px-6 py-8">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Bem-vindo ao seu Dashboard</h2>
+                    <p class="text-gray-600">Acompanhe seu progresso e continue sua jornada rumo à aprovação!</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Dias de Estudo</p>
+                                <p class="text-2xl font-bold text-blue-600" id="studyDays">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl">📅</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Simulados Feitos</p>
+                                <p class="text-2xl font-bold text-green-600" id="simuladosCount">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl">📝</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Taxa de Acerto</p>
+                                <p class="text-2xl font-bold text-purple-600" id="successRate">0%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl">🎯</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Dias até a Prova</p>
+                                <p class="text-2xl font-bold text-orange-600" id="diasProva">--</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl">⏰</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Progresso por Matéria</h3>
+                        <div class="space-y-4" id="progressoMaterias">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Cronograma de Hoje</h3>
+                        <div class="space-y-3" id="cronogramaHoje">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Ações Rápidas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <button onclick="showSection('perfil-concurso')" class="p-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all card-hover">
+                            <span class="text-2xl mb-2 block">📋</span>
+                            <p class="font-semibold">Perfil do Concurso</p>
+                            <p class="text-sm opacity-90">Configure seu concurso</p>
+                        </button>
+                        <button onclick="showSection('simulados')" class="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all card-hover">
+                            <span class="text-2xl mb-2 block">🎯</span>
+                            <p class="font-semibold">Fazer Simulado</p>
+                            <p class="text-sm opacity-90">Teste seus conhecimentos</p>
+                        </button>
+                        <button onclick="showSection('redacao')" class="p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all card-hover">
+                            <span class="text-2xl mb-2 block">✍️</span>
+                            <p class="font-semibold">Treinar Redação</p>
+                            <p class="text-sm opacity-90">Pratique sua escrita</p>
+                        </button>
+                        <button onclick="showSection('chat')" class="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all card-hover">
+                            <span class="text-2xl mb-2 block">🤖</span>
+                            <p class="font-semibold">Chat com IA</p>
+                            <p class="text-sm opacity-90">Tire suas dúvidas</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other sections remain the same... -->
+        <!-- (Diagnóstico, Simulados, Redação, Chat sections from previous code) -->
+    </div>
+
+    <script>
+        // Firebase Configuration (VOCÊ VAI SUBSTITUIR PELOS SEUS DADOS)
+       const firebaseConfig = {
+    apiKey: "AIzaSyCpR8xBkgo4zA9m0-MSl2pI09KsVEKsR9Y",
+    authDomain: "concurso-turbo-ia.firebaseapp.com",
+    projectId: "concurso-turbo-ia",
+    storageBucket: "concurso-turbo-ia.firebasestorage.app",
+    messagingSenderId: "559351714048",
+    appId: "1:559351714048:web:18894243f16acae36763e5"
+  };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Global Variables
+        let currentUser = null;
+        let isAdmin = false;
+        let concursoProfile = null;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Check authentication state
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    loadUserData(user);
+                } else {
+                    showLoginScreen();
+                }
+            });
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+        }
+
+        // Authentication Functions
+        function showAdminLogin() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminLoginScreen').classList.remove('hidden');
+        }
+
+        function showUserLogin() {
+            document.getElementById('adminLoginScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        async function loadUserData(user) {
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    // Check if subscription is active
+                    if (new Date(userData.expiryDate) < new Date()) {
+                        alert('Sua assinatura expirou! Entre em contato para renovar.');
+                        auth.signOut();
+                        return;
+                    }
+
+                    currentUser = { ...userData, uid: user.uid };
+                    document.getElementById('currentUserName').textContent = userData.name;
+                    
+                    if (userData.isAdmin) {
+                        isAdmin = true;
+                        showAdminPanel();
+                    } else {
+                        showMainApp();
+                    }
+                } else {
+                    // User document doesn't exist, sign out
+                    auth.signOut();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                auth.signOut();
+            }
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminLoginScreen').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            showSection('perfil-concurso');
+            loadUserProgress();
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminLoginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            updateAdminStats();
+            loadUsersTable();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                // User will be automatically loaded by onAuthStateChanged
+            } catch (error) {
+                alert('Erro no login: ' + error.message);
+            }
+        });
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminUser').value;
+            const password = document.getElementById('adminPassword').value;
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
+                
+                if (userDoc.exists && userDoc.data().isAdmin) {
+                    // Admin login successful - handled by onAuthStateChanged
+                } else {
+                    alert('Acesso negado. Você não é um administrador.');
+                    auth.signOut();
+                }
+            } catch (error) {
+                alert('Credenciais de administrador incorretas!');
+            }
+        });
+
+        function logout() {
+            auth.signOut().then(() => {
+                currentUser = null;
+                isAdmin = false;
+                showLoginScreen();
+            });
+        }
+
+        // Admin Functions
+        document.getElementById('createUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            const name = document.getElementById('newUserName').value;
+            const plan = document.getElementById('newUserPlan').value;
+            const expiryDate = document.getElementById('newUserExpiry').value;
+
+            try {
+                // Create user in Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Create user document in Firestore
+                await db.collection('users').doc(user.uid).set({
+                    name: name,
+                    email: email,
+                    plan: plan,
+                    expiryDate: expiryDate,
+                    createdDate: new Date().toISOString().split('T')[0],
+                    active: true,
+                    isAdmin: false
+                });
+
+                // Clear form
+                document.getElementById('createUserForm').reset();
+                alert('Usuário criado com sucesso!');
+                
+                // Refresh admin data
+                updateAdminStats();
+                loadUsersTable();
+                
+            } catch (error) {
+                alert('Erro ao criar usuário: ' + error.message);
+            }
+        });
+
+        async function updateAdminStats() {
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                const activeUsers = users.filter(u => u.active && new Date(u.expiryDate) >= new Date()).length;
+                const monthlyUsers = users.filter(u => u.plan === 'monthly' && u.active).length;
+                const annualUsers = users.filter(u => u.plan === 'annual' && u.active).length;
+                const monthlyRevenue = (monthlyUsers * 30) + (annualUsers * 199 / 12);
+                const today = new Date().toISOString().split('T')[0];
+                const newToday = users.filter(u => u.createdDate === today).length;
+
+                document.getElementById('activeUsers').textContent = activeUsers;
+                document.getElementById('monthlyRevenue').textContent = `R$ ${monthlyRevenue.toFixed(2)}`;
+                document.getElementById('annualSubs').textContent = annualUsers;
+                document.getElementById('newToday').textContent = newToday;
+            } catch (error) {
+                console.error('Error updating admin stats:', error);
+            }
+        }
+
+        async function loadUsersTable() {
+            try {
+                const usersSnapshot = await db.collection('users').where('isAdmin', '==', false).get();
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = '';
+
+                usersSnapshot.forEach(doc => {
+                    const user = { id: doc.id, ...doc.data() };
+                    const isExpired = new Date(user.expiryDate) < new Date();
+                    const statusClass = isExpired ? 'text-red-600' : 'text-green-600';
+                    const statusText = isExpired ? 'Expirado' : 'Ativo';
+                    const planText = user.plan === 'monthly' ? 'Mensal' : 'Anual';
+
+                    const row = document.createElement('tr');
+                    row.className = 'border-b hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="px-4 py-3 text-sm">${user.name}</td>
+                        <td class="px-4 py-3 text-sm">${user.email}</td>
+                        <td class="px-4 py-3 text-sm">${planText}</td>
+                        <td class="px-4 py-3 text-sm">${new Date(user.expiryDate).toLocaleDateString('pt-BR')}</td>
+                        <td class="px-4 py-3 text-sm ${statusClass} font-semibold">${statusText}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <button onclick="editUser('${user.id}')" class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
+                            <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-800">Excluir</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading users table:', error);
+            }
+        }
+
+        async function editUser(userId) {
+            try {
+                const userDoc = await db.collection('users').doc(userId).get();
+                if (userDoc.exists) {
+                    const user = userDoc.data();
+                    const newExpiry = prompt('Nova data de vencimento (YYYY-MM-DD):', user.expiryDate);
+                    if (newExpiry) {
+                        await db.collection('users').doc(userId).update({
+                            expiryDate: newExpiry
+                        });
+                        loadUsersTable();
+                        updateAdminStats();
+                        alert('Usuário atualizado com sucesso!');
+                    }
+                }
+            } catch (error) {
+                alert('Erro ao editar usuário: ' + error.message);
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                try {
+                    await db.collection('users').doc(userId).delete();
+                    loadUsersTable();
+                    updateAdminStats();
+                    alert('Usuário excluído com sucesso!');
+                } catch (error) {
+                    alert('Erro ao excluir usuário: ' + error.message);
+                }
+            }
+        }
+
+        // Concurso Profile Functions
+        document.getElementById('concursoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                nomeConcurso: document.getElementById('nomeConcurso').value,
+                nivelEscolaridade: document.getElementById('nivelEscolaridade').value,
+                areaAtuacao: document.getElementById('areaAtuacao').value,
+                localConcurso: document.getElementById('localConcurso').value,
+                dataProva: document.getElementById('dataProva').value,
+                tempoDisponivel: document.getElementById('tempoDisponivel').value,
+                conteudoProgramatico: document.getElementById('conteudoProgramatico').value,
+                experienciaConcursos: document.getElementById('experienciaConcursos').value,
+                maiorDificuldade: document.getElementById('maiorDificuldade').value
+            };
+
+            // Simulate AI processing
+            processarComIA(formData);
+        });
+
+        function processarComIA(dados) {
+            // Show loading
+            const submitBtn = document.querySelector('#concursoForm button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '🤖 Processando com IA...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                gerarAnaliseIA(dados);
+                document.getElementById('analiseIA').classList.remove('hidden');
+                document.getElementById('analiseIA').scrollIntoView({ behavior: 'smooth' });
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 3000);
+        }
+
+        function gerarAnaliseIA(dados) {
+            // Análise do Local
+            const analiseLocal = document.getElementById('analiseLocal');
+            analiseLocal.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <span class="text-blue-600 mr-2">📍</span>
+                    <span class="font-semibold">Local: ${dados.localConcurso}</span>
+                </div>
+                <div class="text-gray-700">
+                    <p>• População estimada: ${Math.floor(Math.random() * 2000000 + 500000).toLocaleString()} habitantes</p>
+                    <p>• IDH: ${(0.7 + Math.random() * 0.2).toFixed(3)}</p>
+                    <p>• Principais desafios locais: Mobilidade urbana, educação digital, sustentabilidade</p>
+                    <p>• Temas prováveis: Desenvolvimento local, políticas públicas, inclusão social</p>
+                </div>
+            `;
+
+            // Estatísticas do Concurso
+            const estatisticas = document.getElementById('estatisticasConcurso');
+            const diasRestantes = Math.ceil((new Date(dados.dataProva) - new Date()) / (1000 * 60 * 60 * 24));
+            estatisticas.innerHTML = `
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span>Dias até a prova:</span>
+                        <span class="font-semibold text-orange-600">${diasRestantes} dias</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Tempo de estudo diário:</span>
+                        <span class="font-semibold">${dados.tempoDisponivel}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Nível de dificuldade:</span>
+                        <span class="font-semibold text-purple-600">Alto</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Concorrência estimada:</span>
+                        <span class="font-semibold text-red-600">${Math.floor(Math.random() * 50 + 20)}/vaga</span>
+                    </div>
+                </div>
+            `;
+
+            // Cronograma Inteligente
+            const cronograma = document.getElementById('cronogramaInteligente');
+            const materias = extrairMaterias(dados.conteudoProgramatico);
+            cronograma.innerHTML = materias.map(materia => `
+                <div class="bg-white p-4 rounded-lg border border-purple-200">
+                    <h5 class="font-semibold text-purple-800 mb-2">${materia.nome}</h5>
+                    <div class="text-sm text-gray-600">
+                        <p>Tempo: ${materia.tempo}%</p>
+                        <p>Prioridade: ${materia.prioridade}</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: ${materia.tempo}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Temas para Redação
+            const temasRedacao = document.getElementById('temasRedacao');
+            const temas = gerarTemasRedacao(dados.areaAtuacao, dados.localConcurso);
+            temasRedacao.innerHTML = temas.map(tema => `
+                <div class="bg-white p-4 rounded-lg border border-orange-200">
+                    <h5 class="font-semibold text-orange-800 mb-2">${tema.titulo}</h5>
+                    <p class="text-sm text-gray-600">${tema.descricao}</p>
+                    <span class="inline-block mt-2 px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">${tema.categoria}</span>
+                </div>
+            `).join('');
+
+            // Alertas e Recomendações
+            const alertas = document.getElementById('alertasRecomendacoes');
+            alertas.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-start space-x-3 p-3 bg-yellow-100 rounded-lg">
+                        <span class="text-yellow-600">⚠️</span>
+                        <div>
+                            <p class="font-semibold text-yellow-800">Tempo Limitado</p>
+                            <p class="text-sm text-yellow-700">Com apenas ${diasRestantes} dias, foque nas matérias de maior peso na prova.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 p-3 bg-blue-100 rounded-lg">
+                        <span class="text-blue-600">💡</span>
+                        <div>
+                            <p class="font-semibold text-blue-800">Dica Personalizada</p>
+                            <p class="text-sm text-blue-700">Baseado no seu perfil, recomendamos 2 simulados por semana e 1 redação a cada 3 dias.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 p-3 bg-green-100 rounded-lg">
+                        <span class="text-green-600">✅</span>
+                        <div>
+                            <p class="font-semibold text-green-800">Ponto Forte Identificado</p>
+                            <p class="text-sm text-green-700">Sua experiência em ${dados.areaAtuacao} será uma vantagem nos conhecimentos específicos.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Save profile
+            concursoProfile = dados;
+            concursoProfile.diasRestantes = diasRestantes;
+            concursoProfile.materias = materias;
+            concursoProfile.temasRedacao = temas;
+        }
+
+        function extrairMaterias(conteudo) {
+            // Simulate AI extraction of subjects from content
+            const materiasComuns = [
+                { nome: 'Português', tempo: 25, prioridade: 'Alta' },
+                { nome: 'Matemática', tempo: 20, prioridade: 'Média' },
+                { nome: 'Conhecimentos Específicos', tempo: 30, prioridade: 'Alta' },
+                { nome: 'Atualidades', tempo: 15, prioridade: 'Média' },
+                { nome: 'Informática', tempo: 10, prioridade: 'Baixa' }
+            ];
+            
+            return materiasComuns;
+        }
+
+        function gerarTemasRedacao(area, local) {
+            const temas = {
+                'educacao': [
+                    { titulo: 'Educação Digital e Inclusão', descricao: 'O papel da tecnologia na educação pública', categoria: 'Tecnologia' },
+                    { titulo: 'Formação Continuada de Professores', descricao: 'Importância da capacitação docente', categoria: 'Educação' }
+                ],
+                'saude': [
+                    { titulo: 'Saúde Pública Pós-Pandemia', descricao: 'Desafios e oportunidades no SUS', categoria: 'Saúde' },
+                    { titulo: 'Prevenção e Promoção da Saúde', descricao: 'Estratégias de medicina preventiva', categoria: 'Saúde' }
+                ],
+                'administrativa': [
+                    { titulo: 'Modernização da Administração Pública', descricao: 'Digitalização e eficiência administrativa', categoria: 'Gestão' },
+                    { titulo: 'Transparência e Participação Cidadã', descricao: 'Governo aberto e controle social', categoria: 'Cidadania' }
+                ]
+            };
+
+            return temas[area] || temas['administrativa'];
+        }
+
+        async function salvarPerfilConcurso() {
+            if (currentUser && concursoProfile) {
+                try {
+                    // Save to Firestore
+                    await db.collection('users').doc(currentUser.uid).update({
+                        concursoProfile: concursoProfile
+                    });
+                    
+                    // Update local user data
+                    currentUser.concursoProfile = concursoProfile;
+                    
+                    // Update dashboard
+                    updateDashboardWithProfile();
+                    
+                    alert('Perfil do concurso salvo com sucesso! Agora você pode acessar todas as funcionalidades personalizadas.');
+                    showSection('dashboard');
+                } catch (error) {
+                    alert('Erro ao salvar perfil: ' + error.message);
+                }
+            }
+        }
+
+        function updateDashboardWithProfile() {
+            if (concursoProfile) {
+                document.getElementById('diasProva').textContent = concursoProfile.diasRestantes;
+                
+                // Update progress by subject
+                const progressContainer = document.getElementById('progressoMaterias');
+                if (progressContainer && concursoProfile.materias) {
+                    progressContainer.innerHTML = concursoProfile.materias.map(materia => `
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-medium">${materia.nome}</span>
+                                <span class="text-sm text-gray-500">${Math.floor(Math.random() * 40 + 30)}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" style="width: ${Math.floor(Math.random() * 40 + 30)}%"></div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Update today's schedule
+                const cronogramaContainer = document.getElementById('cronogramaHoje');
+                if (cronogramaContainer) {
+                    cronogramaContainer.innerHTML = `
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <span class="text-green-600 mr-3">✓</span>
+                            <div>
+                                <p class="font-medium">${concursoProfile.materias[0]?.nome || 'Português'} - Revisão</p>
+                                <p class="text-sm text-gray-500">09:00 - 10:30 (Concluído)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500 pulse-animation">
+                            <span class="text-blue-600 mr-3">▶</span>
+                            <div>
+                                <p class="font-medium">Simulado - ${concursoProfile.materias[1]?.nome || 'Matemática'}</p>
+                                <p class="text-sm text-gray-500">11:00 - 12:00 (Em andamento)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
+                            <span class="text-gray-400 mr-3">○</span>
+                            <div>
+                                <p class="font-medium">Redação - Tema ${concursoProfile.areaAtuacao}</p>
+                                <p class="text-sm text-gray-500">14:00 - 15:30 (Pendente)</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        async function loadUserProgress() {
+            if (currentUser && currentUser.concursoProfile) {
+                concursoProfile = currentUser.concursoProfile;
+                updateDashboardWithProfile();
+            }
+        }
+
+        // Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            const section = document.getElementById(sectionName);
+            if (section) {
+                section.classList.remove('hidden');
+            }
+        }
+
+        // Auto-set expiry date for new users
+        document.getElementById('newUserPlan').addEventListener('change', function() {
+            const plan = this.value;
+            const expiryInput = document.getElementById('newUserExpiry');
+            const today = new Date();
+            
+            if (plan === 'monthly') {
+                today.setMonth(today.getMonth() + 1);
+            } else if (plan === 'annual') {
+                today.setFullYear(today.getFullYear() + 1);
+            }
+            
+            expiryInput.value = today.toISOString().split('T')[0];
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cb1ed5d76ef233',t:'MTc1NDc4MzA1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
