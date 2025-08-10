@@ -1293,8 +1293,13 @@
                 btn.classList.remove('border-blue-500', 'text-blue-600');
                 btn.classList.add('border-transparent', 'text-gray-500');
             });
-            event.target.classList.remove('border-transparent', 'text-gray-500');
-            event.target.classList.add('border-blue-500', 'text-blue-600');
+            
+            // Find the clicked button safely
+            const clickedBtn = document.querySelector(`[onclick="showStudentSection('${section}')"]`);
+            if (clickedBtn) {
+                clickedBtn.classList.remove('border-transparent', 'text-gray-500');
+                clickedBtn.classList.add('border-blue-500', 'text-blue-600');
+            }
         }
 
         async function loadStudentData(userData) {
@@ -1309,6 +1314,9 @@
             // Update progress ring
             const progress = userData.studyProgress || 0;
             updateProgressRing(progress);
+
+            // Setup profile form
+            setupProfileForm();
 
             // Load profile if exists
             if (userProfile.fullName) {
@@ -1354,44 +1362,49 @@
         }
 
         // Profile Management
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const profileData = {
-                fullName: document.getElementById('fullName').value,
-                birthDate: document.getElementById('birthDate').value,
-                contestType: document.getElementById('contestType').value,
-                institution: document.getElementById('institution').value,
-                examDate: document.getElementById('examDate').value,
-                targetPosition: document.getElementById('targetPosition').value,
-                dailyHours: parseInt(document.getElementById('dailyHours').value),
-                studyTime: document.getElementById('studyTime').value,
-                currentLevel: document.getElementById('currentLevel').value,
-                studyContent: document.getElementById('studyContent').value,
-                studyNotes: document.getElementById('studyNotes').value
-            };
+        function setupProfileForm() {
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const profileData = {
+                        fullName: document.getElementById('fullName').value,
+                        birthDate: document.getElementById('birthDate').value,
+                        contestType: document.getElementById('contestType').value,
+                        institution: document.getElementById('institution').value,
+                        examDate: document.getElementById('examDate').value,
+                        targetPosition: document.getElementById('targetPosition').value,
+                        dailyHours: parseInt(document.getElementById('dailyHours').value),
+                        studyTime: document.getElementById('studyTime').value,
+                        currentLevel: document.getElementById('currentLevel').value,
+                        studyContent: document.getElementById('studyContent').value,
+                        studyNotes: document.getElementById('studyNotes').value
+                    };
 
-            try {
-                await db.collection('users').doc(currentUser.uid).update({
-                    profile: profileData,
-                    updatedAt: new Date()
+                    try {
+                        await db.collection('users').doc(currentUser.uid).update({
+                            profile: profileData,
+                            updatedAt: new Date()
+                        });
+
+                        userProfile = profileData;
+                        alert('Perfil salvo com sucesso!');
+                        
+                        // Generate study plan and materials
+                        generateStudyPlan();
+                        loadMaterials();
+                        loadSimulations();
+                        loadProgressData();
+                        
+                        // Switch to dashboard
+                        showStudentSection('dashboard');
+                    } catch (error) {
+                        alert('Erro ao salvar perfil: ' + error.message);
+                    }
                 });
-
-                userProfile = profileData;
-                alert('Perfil salvo com sucesso!');
-                
-                // Generate study plan and materials
-                generateStudyPlan();
-                loadMaterials();
-                loadSimulations();
-                loadProgressData();
-                
-                // Switch to dashboard
-                showStudentSection('dashboard');
-            } catch (error) {
-                alert('Erro ao salvar perfil: ' + error.message);
             }
-        });
+        }
 
         function loadProfileData() {
             if (!userProfile) return;
@@ -2054,7 +2067,7 @@
             document.getElementById('simulationModal').style.display = 'none';
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cd68e57783b54f',t:'MTc1NDgwNzA2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cdb04224a13729',t:'MTc1NDgwOTk4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
 
